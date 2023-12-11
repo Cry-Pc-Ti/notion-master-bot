@@ -9,8 +9,8 @@ export const fetchRelationName = async (pageId: string) => {
 
     // ページタイトルを取得
     if (isFullPage(pageData)) {
-      if (!('Name' in pageData.properties)) return '';
-      if (!('title' in pageData.properties.Name)) return '';
+      if (!('Name' in pageData.properties)) return title;
+      if (!('title' in pageData.properties.Name)) return title;
 
       title = pageData.properties.Name.title[0].plain_text;
     }

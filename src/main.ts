@@ -8,8 +8,9 @@ import { saveNotionLibraryData } from './notion/saveNotionLibraryData';
 import { memoCommand } from './discord/commands/memoCommand';
 import { taskCommand } from './discord/commands/taskCommand';
 import { diaryCommand } from './discord/commands/diaryCommand';
+import { clipCommand } from './discord/commands/clipCommand';
 
-const commands = [memoCommand.data, taskCommand.data, diaryCommand.data];
+const commands = [memoCommand.data, taskCommand.data, diaryCommand.data, clipCommand.data];
 
 // Discordサーバーにコマンドを登録
 const rest = new dm.REST({ version: '10' }).setToken(dm.token);
@@ -58,6 +59,10 @@ dm.discord.once('ready', () => {
           // diaryコマンドを実行
         } else if (interaction.commandName === diaryCommand.data.name) {
           await diaryCommand.execute(interaction);
+
+          // clipコマンドを実行
+        } else if (interaction.commandName === clipCommand.data.name) {
+          await clipCommand.execute(interaction);
         }
       }
     }

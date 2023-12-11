@@ -75,24 +75,19 @@ export const createMemoMessage = {
 };
 
 export const createSaveMessage = {
-  update(date: string, url: string) {
-    // 曜日を取得
-    const days: string[] = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const dayOfWeek: string = days[new Date(date).getDay()];
-
+  update(title: string, url: string) {
     // 埋め込みメッセージを作成
     const embedMsg = new EmbedBuilder()
-      .setTitle('Success: Diary Entry Saved')
+      .setTitle('Success: Memo Entry Saved')
       .setURL(url)
-      .addFields({ name: 'Saved Diary', value: `${date} ${dayOfWeek}` })
       .setColor(7506394)
+      .addFields({ name: 'Title', value: title })
       .setFooter({
         text: 'Notion',
         iconURL:
           'https://cdn.discordapp.com/attachments/896987534645669918/1134089854049861662/notion.png',
       })
       .setTimestamp();
-
     return embedMsg;
   },
 };

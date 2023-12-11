@@ -3,6 +3,7 @@ import { notion, masterDbId, isFullPage, CreatePageResponse } from '../../module
 export const insertClip = async (
   faviconUrl: string,
   title: string,
+  siteUrl: string,
   // tagId: string,
   favorite: boolean
 ) => {
@@ -28,6 +29,9 @@ export const insertClip = async (
               },
             },
           ],
+        },
+        URL: {
+          url: siteUrl,
         },
         // Tag: {
         //   relation: [
