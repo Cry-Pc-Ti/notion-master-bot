@@ -18,9 +18,9 @@ export const queryAutoCompleteChoice = (folder: string, folderName: string) => {
 
     for (const tag of jsonData.Tag) {
       if (folder === 'masterFolder') {
-        if (tag.subFolder && tag.subFolder.folderName && tag.subFolder.folderName === folderName) {
-          const folderName = tag.masterFolder.folderName;
-          const pageId = tag.masterFolder.pageId;
+        if (tag.SubFolder && tag.SubFolder.FolderName && tag.SubFolder.FolderName === folderName) {
+          const folderName = tag.MasterFolder.FolderName;
+          const pageId = tag.MasterFolder.PageId;
 
           if (!addedFolder.has(folderName)) {
             autoCompleteChoice.push({ name: folderName, value: pageId });
@@ -28,9 +28,9 @@ export const queryAutoCompleteChoice = (folder: string, folderName: string) => {
           }
         }
       } else if (folder === 'subFolder') {
-        if (tag.subFolder && tag.subFolder.folderName && tag.subFolder.folderName === folderName) {
-          const tagName = tag.tagName;
-          const pageId = tag.pageId;
+        if (tag.SubFolder && tag.SubFolder.FolderName && tag.SubFolder.FolderName === folderName) {
+          const tagName = tag.TagName;
+          const pageId = tag.PageId;
 
           if (!addedFolder.has(tagName)) {
             autoCompleteChoice.push({ name: tagName, value: pageId });

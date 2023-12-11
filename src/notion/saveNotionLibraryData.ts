@@ -6,7 +6,7 @@ import {
   tagDbId,
   isFullPage,
   GetPageResponse,
-  NotionData,
+  NotionLibraryData,
 } from '../modules/notionModule';
 import { fetchRelationName } from './fetchRelationName';
 
@@ -35,7 +35,7 @@ export const saveNotionLibraryData = async () => {
     });
 
     // フォルダ及びタグのデータを格納する変数を定義
-    const pagesData: NotionData = { Folder: [], Tag: [] };
+    const pagesData: NotionLibraryData = { Folder: [], Tag: [] };
 
     // ページIDを抽出し、ページ名を取得
     for (const page of folderDbResponse.results) {
@@ -54,7 +54,7 @@ export const saveNotionLibraryData = async () => {
       }
 
       // フォルダページのデータをに格納
-      pagesData.Folder.push({ folderName: folderName, pageId: folderPageId });
+      pagesData.Folder.push({ FolderName: folderName, PageId: folderPageId });
     }
 
     // TagDBからページ情報を取得
@@ -104,6 +104,7 @@ export const saveNotionLibraryData = async () => {
       if (isFullPage(tagPageData)) {
         if (!('Name' in tagPageData.properties)) continue;
         if (!('title' in tagPageData.properties.Name)) continue;
+
         tagName = tagPageData.properties.Name.title[0].plain_text;
       }
 
@@ -113,8 +114,8 @@ export const saveNotionLibraryData = async () => {
       if (isFullPage(tagPageData)) {
         if (!('MasterFolder' in tagPageData.properties)) continue;
         if (!('relation' in tagPageData.properties.MasterFolder)) continue;
-        masterFolderId = tagPageData.properties.MasterFolder.relation[0].id;
 
+        masterFolderId = tagPageData.properties.MasterFolder.relation[0].id;
         masterFolderName = await fetchRelationName(masterFolderId);
       }
 
@@ -124,24 +125,28 @@ export const saveNotionLibraryData = async () => {
       if (isFullPage(tagPageData)) {
         if (!('SubFolder' in tagPageData.properties)) continue;
         if (!('relation' in tagPageData.properties.SubFolder)) continue;
-        subFolderId = tagPageData.properties.SubFolder.relation[0].id;
 
+        subFolderId = tagPageData.properties.SubFolder.relation[0].id;
         subFolderName = await fetchRelationName(subFolderId);
       }
 
       // タグページのデータを配列に格納
       pagesData.Tag.push({
-        tagName: tagName,
-        pageId: tagPageId,
-        masterFolder: { folderName: masterFolderName, pageId: masterFolderId },
-        subFolder: { folderName: subFolderName, pageId: subFolderId },
+        TagName: tagName,
+        PageId: tagPageId,
+        MasterFolder: { FolderName: masterFolderName, PageId: masterFolderId },
+        SubFolder: { FolderName: subFolderName, PageId: subFolderId },
       });
     }
 
     // データをJSON形式で保存
     fs.writeFileSync('notion-data.json', JSON.stringify(pagesData, null, 2));
-    console.log('NotionのデータをJSONとして保存しました。');
+    console.log('NotionライブラリのデータをJSONとして保存しました。');
   } catch (error: unknown) {
-    console.error('Notionのデータ取得及び保存中にエラーが発生しました。: ', error);
+    if (error instanceof Error)
+      console.error(
+        'Notionライブラリのデータ取得及び保存中にエラーが発生しました。: ',
+        error.message
+      );
   }
 };

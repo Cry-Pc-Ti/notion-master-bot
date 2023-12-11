@@ -1,11 +1,11 @@
 import { notion, isFullPage } from '../modules/notionModule';
 
 export const fetchRelationName = async (pageId: string) => {
+  let title: string = '';
+
   try {
     // ページIDからページ情報を取得
     const pageData = await notion.pages.retrieve({ page_id: pageId });
-
-    let title: string = '';
 
     // ページタイトルを取得
     if (isFullPage(pageData)) {
@@ -19,6 +19,6 @@ export const fetchRelationName = async (pageId: string) => {
     return title;
   } catch (error: unknown) {
     if (error instanceof Error) console.error('Error: ', error.message);
-    return '';
+    return title;
   }
 };

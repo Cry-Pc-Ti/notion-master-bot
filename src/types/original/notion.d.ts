@@ -1,16 +1,22 @@
-export interface Folder {
-  folderName: string;
-  pageId: string;
+export interface FolderData {
+  MasterFolder: {
+    FolderName: string;
+    PageId: string;
+  };
+  SubFolder: {
+    FolderName: string;
+    PageId: string;
+  };
 }
 
-export interface Tag {
-  tagName: string;
-  pageId: string;
-  masterFolder: Folder;
-  subFolder: Folder;
+export interface TagData {
+  TagName: string;
+  PageId: string;
+  MasterFolder: { FolderName: string; PageId: string };
+  SubFolder: { FolderName: string; PageId: string };
 }
 
 export interface NotionLibraryData {
-  Folder: Folder[];
-  Tag: Tag[];
+  Folder: FolderData[];
+  Tag: TagData[];
 }

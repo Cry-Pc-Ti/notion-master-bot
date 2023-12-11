@@ -7,7 +7,7 @@ import {
   GetPageResponse,
 } from '@notionhq/client/build/src/api-endpoints';
 import { PropertyFilter } from '../types/@notionhq/api-endpoints';
-import { NotionLibraryData, Folder, Tag } from '../types/original/notion';
+import { NotionLibraryData, FolderData, TagData } from '../types/original/notion';
 import { CreatePageResponse } from '@notionhq/client/build/src/api-endpoints';
 
 // ENVファイルの読み込み
@@ -28,8 +28,8 @@ export {
   isFullPage,
   GetPageResponse,
   PropertyFilter,
-  NotionLibraryData as NotionData,
-  Folder,
-  Tag,
+  NotionLibraryData,
+  FolderData as Folder,
+  TagData as Tag,
   CreatePageResponse,
 };

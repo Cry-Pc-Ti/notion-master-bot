@@ -76,6 +76,7 @@ export const memoCommand = {
         const title: string | null = options.getString('title');
         const body: string | null = options.getString('body');
 
+        // タイトルかタグがnullの場合、処理を中断
         if (!tagId || !title) {
           await interaction.editReply('処理が失敗しました');
           return;
