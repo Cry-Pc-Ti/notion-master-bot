@@ -35,7 +35,7 @@ export const saveNotionLibraryData = async () => {
     });
 
     // フォルダ及びタグのデータを格納する変数を定義
-    const pagesData: NotionLibraryData = { Folder: [], Tag: [] };
+    const pagesData: NotionLibraryData = { Folder: { MasterFolder: [], SubFolder: [] }, Tag: [] };
 
     // ページIDを抽出し、ページ名を取得
     for (const page of folderDbResponse.results) {
@@ -51,10 +51,19 @@ export const saveNotionLibraryData = async () => {
         if (!('title' in folderPageData.properties.Name)) continue;
 
         folderName = folderPageData.properties.Name.title[0].plain_text;
-      }
 
-      // フォルダページのデータをに格納
-      pagesData.Folder.push({ FolderName: folderName, PageId: folderPageId });
+        if (!('isMaster' in folderPageData.properties)) continue;
+        if (!('checkbox' in folderPageData.properties.isMaster)) continue;
+
+        const isMaster = folderPageData.properties.isMaster.checkbox;
+
+        // フォルダページのデータをに格納
+        if (isMaster) {
+          pagesData.Folder.MasterFolder.push({ FolderName: folderName, PageId: folderPageId });
+        } else {
+          pagesData.Folder.SubFolder.push({ FolderName: folderName, PageId: folderPageId });
+        }
+      }
     }
 
     // TagDBからページ情報を取得
@@ -150,3 +159,7 @@ export const saveNotionLibraryData = async () => {
       );
   }
 };
+
+(async () => {
+  await saveNotionLibraryData();
+})();

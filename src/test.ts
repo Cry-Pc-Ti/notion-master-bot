@@ -18,7 +18,7 @@ export const queryAutoCompleteChoice = () => {
 
     const folderChoice: ApplicationCommandOptionChoiceData[] = [];
 
-    for (const folder of jsonData.Folder) {
+    for (const folder of jsonData.Folder.MasterFolder) {
       const folderName = folder.FolderName;
       const folderId = folder.PageId;
 

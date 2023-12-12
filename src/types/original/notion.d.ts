@@ -2,11 +2,11 @@ export interface FolderData {
   MasterFolder: {
     FolderName: string;
     PageId: string;
-  };
+  }[];
   SubFolder: {
     FolderName: string;
     PageId: string;
-  };
+  }[];
 }
 
 export interface TagData {
@@ -17,6 +17,6 @@ export interface TagData {
 }
 
 export interface NotionLibraryData {
-  Folder: FolderData[];
+  Folder: FolderData;
   Tag: TagData[];
 }
