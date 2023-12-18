@@ -5,12 +5,12 @@ import {
   Channel,
   ChannelType,
 } from '../../modules/discordModule';
-import { queryTask } from '../../notion/query/queryTaskPage';
-import { updateTask } from '../../notion/update/updateTaskPage';
-import { insertTask } from '../../notion/insert/insertTaskPage';
+import { queryTask } from '../../notion/queryPage/queryTaskPage';
+import { updateTask } from '../../notion/updatePage/updateTaskPage';
+import { insertTask } from '../../notion/insertPage/insertTaskPage';
 import { createTaskMessage } from '../createEmbedMessage';
 import { fetchRelationName } from '../../notion/fetchRelationName';
-import { queryAutoCompleteChoice } from '../../notion/query/autoComplete/createAutoComplete';
+import { queryAutoCompleteChoice } from '../autoComplete/createAutoComplete';
 
 export const taskCommand = {
   // スラッシュコマンドの定義

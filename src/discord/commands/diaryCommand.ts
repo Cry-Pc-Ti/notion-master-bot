@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction } from '../../modules/discordModule';
-import { queryDiaryPage } from '../../notion/query/queryDiaryPage';
-import { updateDiary } from '../../notion/update/updateDiaryPage';
+import { queryDiaryPage } from '../../notion/queryPage/queryDiaryPage';
+import { updateDiary } from '../../notion/updatePage/updateDiaryPage';
 import { createDiaryMessage } from '../createEmbedMessage';
 
 export const diaryCommand = {

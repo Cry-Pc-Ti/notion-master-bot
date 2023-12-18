@@ -8,8 +8,23 @@ import {
   ApplicationCommandOptionChoiceData,
 } from '../../modules/discordModule';
 import { fetchTitleAndFavicon } from '../../notion/fetchTitleAndFavicon';
-import { insertClip } from '../../notion/insert/insertClipPage';
+import { insertClip } from '../../notion/insertPage/insertClipPage';
 import { createSaveMessage } from '../createEmbedMessage';
+import { NotionLibraryData } from '../../modules/notionModule';
+import {
+  ActionRowBuilder,
+  ActionRowData,
+  ComponentType,
+  Interaction,
+  InteractionCollector,
+  InteractionResponse,
+  Options,
+  SelectMenuBuilder,
+  StringSelectMenuBuilder,
+  StringSelectMenuInteraction,
+  StringSelectMenuOptionBuilder,
+  TextInputBuilder,
+} from 'discord.js';
 
 export const clipCommand = {
   // コマンドを定義
@@ -17,18 +32,66 @@ export const clipCommand = {
     .setName('clip')
     .setDescription('Clip Reference')
     .addStringOption((option) => option.setName('url').setDescription('Set URL').setRequired(true))
-    // .addStringOption((option) =>
-    //   option
-    //     .setName('category')
-    //     .setDescription('Set Category')
-    //     .setAutocomplete(true)
-    //     .setRequired(true)
-    // )
-    // .addStringOption((option) => option.setChoices().setAutocomplete(true).setRequired(true))
     .addBooleanOption((option) =>
       option.setName('favorite').setDescription('Set Favorite').setRequired(true)
     )
+    // .addStringOption((option) =>
+    //   option
+    //     .setName('master tag')
+    //     .setDescription('Select Folder')
+    //     .setAutocomplete(true)
+    //     .setRequired(true)
+    // )
     .toJSON(),
+
+  async selectTag(interaction: ChatInputCommandInteraction) {
+    // JSONファイルの読み込み
+    const fileData = fs.readFileSync('notion-data.json', 'utf-8');
+
+    // JSONデータをオブジェクトに変換
+    const jsonData: NotionLibraryData = JSON.parse(fileData);
+
+    const masterFolderChoice: { label: string; value: string }[] = [];
+
+    for (const folder of jsonData.Folder) {
+      const masterFolderName = folder.MasterFolder.FolderName;
+      const masterFolderPageId = folder.MasterFolder.PageId;
+
+      masterFolderChoice.push({ label: masterFolderName, value: masterFolderPageId });
+    }
+
+    const select: StringSelectMenuBuilder = new StringSelectMenuBuilder()
+      .setCustomId('masterFolder')
+      .setPlaceholder('Select Master Folder')
+      .setMinValues(1)
+      .setMaxValues(1)
+      .addOptions(
+        masterFolderChoice.map((masterFolderChoice) =>
+          new StringSelectMenuOptionBuilder()
+            .setLabel(masterFolderChoice.label)
+            .setValue(masterFolderChoice.value)
+        )
+      );
+
+    const row: ActionRowBuilder<StringSelectMenuBuilder> =
+      new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(select);
+
+    const reply: InteractionResponse = await interaction.reply({ components: [row] });
+
+    const collector: InteractionCollector<StringSelectMenuInteraction> =
+      reply.createMessageComponentCollector({
+        componentType: ComponentType.StringSelect,
+        filter: (i) => i.user.id === interaction.user.id && i.customId === interaction.id,
+        // time: 60_000,
+      });
+
+    collector.on('collect', (interaction: StringSelectMenuInteraction) => {
+      console.log(interaction.values);
+      if (!interaction.values.length) return;
+
+      interaction.reply(interaction.values[0]);
+    });
+  },
 
   // コマンド実行時の処理
   async execute(interaction: ChatInputCommandInteraction) {

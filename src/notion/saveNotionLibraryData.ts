@@ -10,10 +10,16 @@ import {
 } from '../modules/notionModule';
 import { fetchRelationName } from './fetchRelationName';
 
-// タグライブラリから情報を取得し、JSON形式で保存
+// フォルダ・タグライブラリからデータを取得し、JSON形式で保存
 export const saveNotionLibraryData = async () => {
+  // フォルダ及びタグのデータを格納する変数を定義
+  const notionLibraryData: NotionLibraryData = {
+    Folder: [],
+    Tag: [],
+  };
+
   try {
-    // FolderDBからページ情報を取得
+    // FolderDBからマスターフォルダのデータを取得
     const folderDbResponse = await notion.databases.query({
       database_id: folderDbId,
       filter: {
@@ -22,6 +28,12 @@ export const saveNotionLibraryData = async () => {
             property: 'Archive',
             checkbox: {
               does_not_equal: true,
+            },
+          },
+          {
+            property: 'isMaster',
+            checkbox: {
+              equals: true,
             },
           },
         ],
@@ -34,35 +46,44 @@ export const saveNotionLibraryData = async () => {
       ],
     });
 
-    // フォルダ及びタグのデータを格納する変数を定義
-    const pagesData: NotionLibraryData = { Folder: { MasterFolder: [], SubFolder: [] }, Tag: [] };
-
     // ページIDを抽出し、ページ名を取得
     for (const page of folderDbResponse.results) {
-      const folderPageId: string = page.id;
+      const masterFolderPageId: string = page.id;
       const folderPageData: GetPageResponse = await notion.pages.retrieve({
-        page_id: folderPageId,
+        page_id: masterFolderPageId,
       });
-
-      let folderName: string = '';
 
       if (isFullPage(folderPageData)) {
         if (!('Name' in folderPageData.properties)) continue;
         if (!('title' in folderPageData.properties.Name)) continue;
 
-        folderName = folderPageData.properties.Name.title[0].plain_text;
+        // マスターフォルダ名を取得
+        const masterFolderName = folderPageData.properties.Name.title[0].plain_text;
 
-        if (!('isMaster' in folderPageData.properties)) continue;
-        if (!('checkbox' in folderPageData.properties.isMaster)) continue;
+        if (!('SubFolder' in folderPageData.properties)) continue;
+        if (!('relation' in folderPageData.properties.SubFolder)) continue;
 
-        const isMaster = folderPageData.properties.isMaster.checkbox;
+        // リレーションされているサブフォルダの情報を取得
+        const subFolderRelationData = folderPageData.properties.SubFolder.relation;
 
-        // フォルダページのデータをに格納
-        if (isMaster) {
-          pagesData.Folder.MasterFolder.push({ FolderName: folderName, PageId: folderPageId });
-        } else {
-          pagesData.Folder.SubFolder.push({ FolderName: folderName, PageId: folderPageId });
+        const subFolderData: { FolderName: string; PageId: string }[] = [];
+
+        // サブフォルダの情報を取得し、配列に格納
+        for (const page of subFolderRelationData) {
+          const pageId = page.id;
+          const folderName = await fetchRelationName(pageId);
+
+          subFolderData.push({ FolderName: folderName, PageId: pageId });
         }
+
+        // 取得したフォルダのデータを格納
+        notionLibraryData.Folder.push({
+          MasterFolder: {
+            FolderName: masterFolderName,
+            PageId: masterFolderPageId,
+            SubFolder: subFolderData,
+          },
+        });
       }
     }
 
@@ -71,12 +92,6 @@ export const saveNotionLibraryData = async () => {
       database_id: tagDbId,
       filter: {
         and: [
-          {
-            property: 'MasterTag',
-            relation: {
-              is_empty: true,
-            },
-          },
           {
             property: 'Archive',
             checkbox: {
@@ -140,16 +155,19 @@ export const saveNotionLibraryData = async () => {
       }
 
       // タグページのデータを配列に格納
-      pagesData.Tag.push({
+      notionLibraryData.Tag.push({
         TagName: tagName,
         PageId: tagPageId,
-        MasterFolder: { FolderName: masterFolderName, PageId: masterFolderId },
-        SubFolder: { FolderName: subFolderName, PageId: subFolderId },
+        MasterFolder: {
+          FolderName: masterFolderName,
+          PageId: masterFolderId,
+          SubFolder: { FolderName: subFolderName, PageId: subFolderId },
+        },
       });
     }
 
     // データをJSON形式で保存
-    fs.writeFileSync('notion-data.json', JSON.stringify(pagesData, null, 2));
+    fs.writeFileSync('notion-data.json', JSON.stringify(notionLibraryData, null, 2));
     console.log('NotionライブラリのデータをJSONとして保存しました。');
   } catch (error: unknown) {
     if (error instanceof Error)

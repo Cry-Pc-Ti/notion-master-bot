@@ -3,11 +3,11 @@ import {
   AutocompleteInteraction,
   ChatInputCommandInteraction,
 } from '../../modules/discordModule';
-import { insertMemo } from '../../notion/insert/insertMemoPage';
-import { queryMemoPage } from '../../notion/query/queryMemoPage';
+import { insertMemo } from '../../notion/insertPage/insertMemoPage';
+import { queryMemoPage } from '../../notion/queryPage/queryMemoPage';
 import { fetchRelationName } from '../../notion/fetchRelationName';
 import { createMemoMessage } from '../createEmbedMessage';
-import { queryAutoCompleteChoice } from '../../notion/query/autoComplete/createAutoComplete';
+import { queryAutoCompleteChoice } from '../autoComplete/createAutoComplete';
 
 export const memoCommand = {
   // スラッシュコマンドの定義

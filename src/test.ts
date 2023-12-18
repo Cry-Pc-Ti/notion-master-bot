@@ -13,19 +13,15 @@ export const queryAutoCompleteChoice = () => {
 
     const autoCompleteChoice: ApplicationCommandOptionChoiceData[] = [];
 
-    // 重複を確認するためのセット
-    const addedFolder: Set<string> = new Set();
+    const masterFolderChoice: ApplicationCommandOptionChoiceData[] = [];
+    const subFolderChoice: ApplicationCommandOptionChoiceData[] = [];
 
-    const folderChoice: ApplicationCommandOptionChoiceData[] = [];
+    for (const folder of jsonData.Folder) {
+      const masterFolderName = folder.MasterFolder.FolderName;
+      const msterFolderPageId = folder.MasterFolder.PageId;
 
-    for (const folder of jsonData.Folder.MasterFolder) {
-      const folderName = folder.FolderName;
-      const folderId = folder.PageId;
-
-      folderChoice.push({ name: folderName, value: folderId });
+      masterFolderChoice.push({ name: masterFolderName, value: msterFolderPageId });
     }
-
-    console.log(folderChoice);
 
     return autoCompleteChoice;
   } catch (error) {

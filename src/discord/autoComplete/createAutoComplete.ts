@@ -1,7 +1,7 @@
 // 必要なモジュールをインポート
 import * as fs from 'fs';
-import { ApplicationCommandOptionChoiceData } from '../../../modules/discordModule';
-import { NotionLibraryData } from '../../../types/original/notion';
+import { ApplicationCommandOptionChoiceData } from '../../modules/discordModule';
+import { NotionLibraryData } from '../../types/original/notion';
 
 export const queryAutoCompleteChoice = (folder: string, folderName: string) => {
   try {
