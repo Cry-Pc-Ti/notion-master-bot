@@ -14,11 +14,12 @@ import { fetchRelationName } from './fetchRelationName';
 export const saveNotionLibraryData = async () => {
   // フォルダ及びタグのデータを格納する変数を定義
   const notionLibraryData: NotionLibraryData = {
-    Folder: [],
+    Folder: { MasterFolder: [], SubFolder: [] },
     Tag: [],
   };
 
   try {
+    // Folderのデータを取得・格納
     // FolderDBからマスターフォルダのデータを取得
     const folderDbResponse = await notion.databases.query({
       database_id: folderDbId,
@@ -76,17 +77,19 @@ export const saveNotionLibraryData = async () => {
           subFolderData.push({ FolderName: folderName, PageId: pageId });
         }
 
-        // 取得したフォルダのデータを格納
-        notionLibraryData.Folder.push({
-          MasterFolder: {
-            FolderName: masterFolderName,
-            PageId: masterFolderPageId,
-            SubFolder: subFolderData,
-          },
+        // マスタフォルダのデータを格納
+        notionLibraryData.Folder.MasterFolder.push({
+          FolderName: masterFolderName,
+          PageId: masterFolderPageId,
+          SubFolderPageId: subFolderData.map((data) => data.PageId),
         });
+
+        // サブフォルダのデータを格納
+        notionLibraryData.Folder.SubFolder.push(...subFolderData);
       }
     }
 
+    // Tagのデータを取得・格納
     // TagDBからページ情報を取得
     const tagDbResponse = await notion.databases.query({
       database_id: tagDbId,

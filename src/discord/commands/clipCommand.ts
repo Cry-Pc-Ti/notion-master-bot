@@ -31,26 +31,20 @@ export const clipCommand = {
   data: new SlashCommandBuilder()
     .setName('clip')
     .setDescription('Clip Reference')
-    .addStringOption((option) => option.setName('url').setDescription('Set URL').setRequired(true))
-    .addBooleanOption((option) =>
-      option.setName('favorite').setDescription('Set Favorite').setRequired(true)
+    .addStringOption((option) =>
+      option.setName('folder').setDescription('Set Folder').setAutocomplete(true).setRequired(true)
     )
-    // .addStringOption((option) =>
-    //   option
-    //     .setName('master tag')
-    //     .setDescription('Select Folder')
-    //     .setAutocomplete(true)
-    //     .setRequired(true)
-    // )
+    .addStringOption((option) => option.setName('url').setDescription('Set URL').setRequired(true))
+    .addBooleanOption((option) => option.setName('favorite').setDescription('Set Favorite'))
     .toJSON(),
 
-  async selectTag(interaction: ChatInputCommandInteraction) {
+  // SubFolderの選択肢を表示する処理
+  async selectMasterFolder(interaction: AutocompleteInteraction) {
     // JSONファイルの読み込み
     const fileData = fs.readFileSync('notion-data.json', 'utf-8');
 
     // JSONデータをオブジェクトに変換
     const jsonData: NotionLibraryData = JSON.parse(fileData);
-
     const masterFolderChoice: { label: string; value: string }[] = [];
 
     for (const folder of jsonData.Folder) {
@@ -76,21 +70,52 @@ export const clipCommand = {
     const row: ActionRowBuilder<StringSelectMenuBuilder> =
       new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(select);
 
-    const reply: InteractionResponse = await interaction.reply({ components: [row] });
+    const selectResponse: InteractionResponse = await interaction.reply({ components: [row] });
 
     const collector: InteractionCollector<StringSelectMenuInteraction> =
-      reply.createMessageComponentCollector({
+      selectResponse.createMessageComponentCollector({
         componentType: ComponentType.StringSelect,
-        filter: (i) => i.user.id === interaction.user.id && i.customId === interaction.id,
-        // time: 60_000,
+      })!;
+
+    collector.on('collect', async (selectMenuInteraction: StringSelectMenuInteraction) => {
+      const selectedMasterFolderId = selectMenuInteraction.values[0];
+      const selectedMasterFolderName = masterFolderChoice.find(
+        (masterFolderChoice) => masterFolderChoice.value === selectedMasterFolderId
+      )?.label;
+
+      await selectMenuInteraction.update({
+        content: `Selected Master Folder: ${selectedMasterFolderName}`,
       });
-
-    collector.on('collect', (interaction: StringSelectMenuInteraction) => {
-      console.log(interaction.values);
-      if (!interaction.values.length) return;
-
-      interaction.reply(interaction.values[0]);
     });
+
+    // selectedMasterFolderIdを返す
+  },
+
+  // Sub Folderを選択する処理
+  async selectSubFolder(interaction: ChatInputCommandInteraction, masterFolderId: string) {
+    // JSONファイルの読み込み
+    const fileData = fs.readFileSync('notion-data.json', 'utf-8');
+
+    // JSONデータをオブジェクトに変換
+    const jsonData: NotionLibraryData = JSON.parse(fileData);
+
+    const subFolderChoice: { label: string; value: string }[] = [];
+
+    // Master Folderに紐づくSub Folderを取得
+    const subFolders = jsonData.Folder.find(
+      (folder) => folder.MasterFolder.PageId === masterFolderId
+    )?.MasterFolder.SubFolder;
+
+    if (!subFolders) {
+      return;
+    }
+
+    for (const subFolder of subFolders) {
+      const subFolderName = subFolder.FolderName;
+      const subFolderPageId = subFolder.PageId;
+
+      subFolderChoice.push({ label: subFolderName, value: subFolderPageId });
+    }
   },
 
   // コマンド実行時の処理

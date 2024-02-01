@@ -4,39 +4,43 @@ import {
   ChatInputCommandInteraction,
   Channel,
   ChannelType,
+  ApplicationCommandOptionChoiceData,
 } from '../../modules/discordModule';
 import { queryTask } from '../../notion/queryPage/queryTaskPage';
 import { updateTask } from '../../notion/updatePage/updateTaskPage';
 import { insertTask } from '../../notion/insertPage/insertTaskPage';
 import { createTaskMessage } from '../createEmbedMessage';
 import { fetchRelationName } from '../../notion/fetchRelationName';
-import { queryAutoCompleteChoice } from '../autoComplete/createAutoComplete';
+import {
+  ActionRowBuilder,
+  ComponentType,
+  StringSelectMenuBuilder,
+  StringSelectMenuInteraction,
+} from 'discord.js';
+import { jsonData } from '../../notion/readJson';
 
 export const taskCommand = {
   // スラッシュコマンドの定義
   data: new SlashCommandBuilder()
     .setName('task')
     .setDescription('Control Notion Task')
-    .addSubcommand(
-      (command) =>
-        command
-          .setName('list')
-          .setDescription('View Tasks in List')
-          .addStringOption((option) =>
-            option
-              .setName('period')
-              .setDescription('Select Period')
-              .addChoices(
-                { name: 'Today', value: 'today' },
-                { name: 'Overdue', value: 'overdue' },
-                { name: 'Tomorrow', value: 'tomorrow' },
-                { name: 'TBD', value: 'tbd' }
-              )
-              .setRequired(true)
-          )
-      // .addStringOption((option) =>
-      //   option.setName('category').setDescription('Select Category').setAutocomplete(true)
-      // )
+    .addSubcommand((command) =>
+      command
+        .setName('list')
+        .setDescription('View Tasks in List')
+        .addStringOption((option) =>
+          option
+            .setName('period')
+            .setDescription('Select Period')
+            .addChoices(
+              { name: 'Today', value: 'today' },
+              { name: 'Overdue', value: 'overdue' },
+              { name: 'Tomorrow', value: 'tomorrow' },
+              { name: 'TBD', value: 'tbd' }
+            )
+            .setRequired(true)
+        )
+        .addBooleanOption((option) => option.setName('all').setDescription('View All Task'))
     )
     .addSubcommand((command) =>
       command
@@ -63,10 +67,14 @@ export const taskCommand = {
         .setName('add')
         .setDescription('Add Task')
         .addStringOption((option) =>
-          option.setName('tag').setDescription('Set Tag').setAutocomplete(true).setRequired(true)
+          option.setName('task').setDescription('Set Task').setRequired(true)
         )
         .addStringOption((option) =>
-          option.setName('task').setDescription('Set Task').setRequired(true)
+          option
+            .setName('folder')
+            .setDescription('Set Folder')
+            .setAutocomplete(true)
+            .setRequired(true)
         )
         .addIntegerOption((option) =>
           option.setName('deadline').setDescription('Set Deadline').setMinValue(8)
@@ -74,15 +82,41 @@ export const taskCommand = {
     ),
 
   // AutoCompleteの登録
-  async autoComplete(interaction: AutocompleteInteraction) {
+  async autocomplete(interaction: AutocompleteInteraction) {
     // optionの情報を取得
     const forcusedOption = interaction.options.getFocused(true);
 
     // optionがtagの場合
-    if (forcusedOption.name === 'tag') {
-      // AutoCompleteの情報を取得
-      const autoCompleteChoice = queryAutoCompleteChoice('subFolder', 'Task');
-      // autocompleteを登録
+    if (forcusedOption.name === 'folder') {
+      // Autocompleteの情報を取得
+      const autoCompleteChoice: ApplicationCommandOptionChoiceData[] = [];
+
+      // 重複を確認するためのセット
+      const addedFolder: Set<string> = new Set();
+
+      const taskFolderPageId: string = jsonData.Folder.SubFolder.find(
+        (folder) => folder.FolderName === 'Task'
+      )?.PageId;
+
+      // SubFolderがTaskのフォルダ名とページIDを取得
+      if (!taskFolderPageId) return;
+
+      for (const masterFolder of jsonData.Folder.MasterFolder) {
+        // SubFolderPageIdがTaskのmasterFolderを取得
+        if (taskFolderPageId) {
+          if (masterFolder.SubFolderPageId.includes(taskFolderPageId)) {
+            const folderName = masterFolder.FolderName;
+            const pageId = masterFolder.PageId;
+
+            if (!addedFolder.has(folderName)) {
+              autoCompleteChoice.push({ name: folderName, value: pageId });
+              addedFolder.add(folderName);
+            }
+          }
+        }
+      }
+
+      // Autocompleteを登録
       await interaction.respond(autoCompleteChoice);
     }
   },
@@ -108,8 +142,11 @@ export const taskCommand = {
           // 相対日付をもとにタスクを取得
           const taskData = await queryTask(relativDate);
 
+          // タスクがない場合、処理を終了
           if (!taskData.length) {
-            interaction.editReply('Task Completed!');
+            await interaction.editReply('Task Completed!');
+
+            // タスクがある場合、埋め込みメッセージを作成・送信
           } else {
             const embedMsg = createTaskMessage.list(taskData);
             await interaction.editReply({ embeds: [embedMsg] });
@@ -143,24 +180,60 @@ export const taskCommand = {
         // タスク追加処理
       } else if (subCommand === 'add') {
         // コマンドに入力された値を取得
-        const tagId: string | null = options.getString('category');
         const title: string | null = options.getString('task');
+        const subFolderId: string | null = options.getString('folder');
         const deadline: number | null = options.getInteger('deadline');
 
-        if (!tagId || !title || !deadline) {
+        console.log(title, subFolderId, deadline);
+
+        if (!subFolderId || !title) {
           await interaction.editReply('処理が失敗しました');
           return;
         }
 
-        const insertPageData = await insertTask(tagId, title, deadline);
+        // 取得したサブフォルダに含まれているタグを取得
+        const taskFolderPageId = jsonData.Folder.SubFolder.find(
+          (folder) => folder.FolderName === 'Task'
+        )?.PageId;
 
-        const tag = await fetchRelationName(tagId);
+        const matchingTags = jsonData.Tag.filter(
+          (tag) =>
+            tag.MasterFolder.PageId === subFolderId &&
+            tag.MasterFolder.SubFolder.PageId === taskFolderPageId
+        );
 
-        // 埋め込みメッセージを作成
-        const embedMsg = createTaskMessage.add(title, tag, insertPageData);
+        const tagSelectMenu: StringSelectMenuBuilder = new StringSelectMenuBuilder()
+          .setCustomId('tag')
+          .setPlaceholder('Select Tag')
+          .setMinValues(1)
+          .setMaxValues(1)
+          .addOptions(matchingTags.map((tag) => ({ label: tag.TagName, value: tag.PageId })));
 
-        // メッセージを送信
-        await interaction.editReply({ embeds: [embedMsg] });
+        // SelectMenuを送信
+        const row: ActionRowBuilder<StringSelectMenuBuilder> =
+          new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(tagSelectMenu);
+
+        const selectResponse = await interaction.editReply({ components: [row] });
+
+        // SelectMenuの値を取得
+        const collector = selectResponse.createMessageComponentCollector({
+          componentType: ComponentType.StringSelect,
+          filter: (selectMenuInteraction) => selectMenuInteraction.user.id === interaction.user.id,
+        });
+
+        collector.on('collect', async (selectMenuInteraction: StringSelectMenuInteraction) => {
+          console.log(selectMenuInteraction.values);
+
+          const selectedTagId = selectMenuInteraction.values[0];
+
+          const insertPageData = await insertTask(selectedTagId, title, deadline);
+
+          const tagName = await fetchRelationName(selectedTagId);
+
+          // 埋め込みメッセージを作成・送信
+          const embedMsg = createTaskMessage.add(title, tagName, insertPageData);
+          await selectMenuInteraction.update(embedMsg);
+        });
       }
     } catch (error: unknown) {
       await interaction.editReply('処理が失敗しました');

@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "ts-node src/main.ts",
-    "start": "ts-node src/notion/saveNotionLibraryData.ts"
+    "start": "ts-node src/main.ts",
+    "test": "ts-node src/notion/saveNotionLibraryData.ts"
   },
   "keywords": [],
   "author": "",

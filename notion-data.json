@@ -1,119 +1,91 @@
 {
-  "Folder": [
-    {
-      "MasterFolder": {
+  "Folder": {
+    "MasterFolder": [
+      {
         "FolderName": "Development",
         "PageId": "f5791f30-a1a2-4308-83c0-43467a4a042b",
         "SubFolder": [
-          {
-            "FolderName": "Task",
-            "PageId": "2d2bafca-5a6c-4935-9c9d-db45aa5da601"
-          },
-          {
-            "FolderName": "Project",
-            "PageId": "f23c7131-0c53-4634-9da6-f996015f0276"
-          }
+          "2d2bafca-5a6c-4935-9c9d-db45aa5da601"
         ]
-      }
-    },
-    {
-      "MasterFolder": {
+      },
+      {
         "FolderName": "Input",
         "PageId": "b3a069ee-4d37-4d09-abbf-8c1e9f017b94",
         "SubFolder": [
-          {
-            "FolderName": "Tips",
-            "PageId": "33bd7f0b-f8b9-4285-bf9f-e544863aba0a"
-          },
-          {
-            "FolderName": "Language",
-            "PageId": "24595a33-9c6d-439f-adbb-df066479d021"
-          },
-          {
-            "FolderName": "Game",
-            "PageId": "90aceb3b-9cb6-4b2f-8403-53706e8c9bad"
-          },
-          {
-            "FolderName": "Infomation",
-            "PageId": "34b4a2be-94f9-41b6-bd72-ede4484968ce"
-          }
+          "33bd7f0b-f8b9-4285-bf9f-e544863aba0a",
+          "24595a33-9c6d-439f-adbb-df066479d021",
+          "90aceb3b-9cb6-4b2f-8403-53706e8c9bad",
+          "34b4a2be-94f9-41b6-bd72-ede4484968ce"
         ]
-      }
-    },
-    {
-      "MasterFolder": {
+      },
+      {
         "FolderName": "Life",
         "PageId": "8c3cb6f2-c746-42d7-8c72-2f1c38931317",
         "SubFolder": [
-          {
-            "FolderName": "Task",
-            "PageId": "2d2bafca-5a6c-4935-9c9d-db45aa5da601"
-          }
+          "2d2bafca-5a6c-4935-9c9d-db45aa5da601"
         ]
-      }
-    },
-    {
-      "MasterFolder": {
+      },
+      {
         "FolderName": "Thinking",
         "PageId": "fcb6115d-e9c4-43cd-a482-b5c3650e757d",
         "SubFolder": [
-          {
-            "FolderName": "Memo",
-            "PageId": "4796ee2f-0a0a-44df-b4b8-430745630a8a"
-          },
-          {
-            "FolderName": "Diary",
-            "PageId": "4cdb1ed4-d7e1-4be7-a736-4e730c62db60"
-          }
+          "4796ee2f-0a0a-44df-b4b8-430745630a8a",
+          "4cdb1ed4-d7e1-4be7-a736-4e730c62db60"
         ]
-      }
-    },
-    {
-      "MasterFolder": {
+      },
+      {
         "FolderName": "Work",
         "PageId": "117ba933-1d9a-4a31-b536-01216c1ef5f6",
         "SubFolder": [
-          {
-            "FolderName": "Task",
-            "PageId": "2d2bafca-5a6c-4935-9c9d-db45aa5da601"
-          },
-          {
-            "FolderName": "Memo",
-            "PageId": "4796ee2f-0a0a-44df-b4b8-430745630a8a"
-          },
-          {
-            "FolderName": "Project",
-            "PageId": "f23c7131-0c53-4634-9da6-f996015f0276"
-          }
+          "2d2bafca-5a6c-4935-9c9d-db45aa5da601",
+          "4796ee2f-0a0a-44df-b4b8-430745630a8a"
         ]
       }
-    }
-  ],
+    ],
+    "SubFolder": [
+      {
+        "FolderName": "Task",
+        "PageId": "2d2bafca-5a6c-4935-9c9d-db45aa5da601"
+      },
+      {
+        "FolderName": "Tips",
+        "PageId": "33bd7f0b-f8b9-4285-bf9f-e544863aba0a"
+      },
+      {
+        "FolderName": "Language",
+        "PageId": "24595a33-9c6d-439f-adbb-df066479d021"
+      },
+      {
+        "FolderName": "Game",
+        "PageId": "90aceb3b-9cb6-4b2f-8403-53706e8c9bad"
+      },
+      {
+        "FolderName": "Infomation",
+        "PageId": "34b4a2be-94f9-41b6-bd72-ede4484968ce"
+      },
+      {
+        "FolderName": "Task",
+        "PageId": "2d2bafca-5a6c-4935-9c9d-db45aa5da601"
+      },
+      {
+        "FolderName": "Memo",
+        "PageId": "4796ee2f-0a0a-44df-b4b8-430745630a8a"
+      },
+      {
+        "FolderName": "Diary",
+        "PageId": "4cdb1ed4-d7e1-4be7-a736-4e730c62db60"
+      },
+      {
+        "FolderName": "Task",
+        "PageId": "2d2bafca-5a6c-4935-9c9d-db45aa5da601"
+      },
+      {
+        "FolderName": "Memo",
+        "PageId": "4796ee2f-0a0a-44df-b4b8-430745630a8a"
+      }
+    ]
+  },
   "Tag": [
-    {
-      "TagName": ".Development.PJ.NotionMasterBot",
-      "PageId": "444758a5-41be-4f33-868b-6eadbb82f0ff",
-      "MasterFolder": {
-        "FolderName": "Development",
-        "PageId": "f5791f30-a1a2-4308-83c0-43467a4a042b",
-        "SubFolder": {
-          "FolderName": "Project",
-          "PageId": "f23c7131-0c53-4634-9da6-f996015f0276"
-        }
-      }
-    },
-    {
-      "TagName": ".Development.PJ.PlayListBot",
-      "PageId": "f090aba0-6501-43a3-ac6d-83a09dae1bf8",
-      "MasterFolder": {
-        "FolderName": "Development",
-        "PageId": "f5791f30-a1a2-4308-83c0-43467a4a042b",
-        "SubFolder": {
-          "FolderName": "Project",
-          "PageId": "f23c7131-0c53-4634-9da6-f996015f0276"
-        }
-      }
-    },
     {
       "TagName": ".Development.PJ.CreateDiary.Task",
       "PageId": "33b464c3-e5ca-4a24-9a2a-c9299afd8ca7",
@@ -121,32 +93,8 @@
         "FolderName": "Development",
         "PageId": "f5791f30-a1a2-4308-83c0-43467a4a042b",
         "SubFolder": {
-          "FolderName": "Project",
-          "PageId": "f23c7131-0c53-4634-9da6-f996015f0276"
-        }
-      }
-    },
-    {
-      "TagName": ".Development.PJ.NotionMasterBot.Task",
-      "PageId": "7ed7b0fc-1714-41e9-b1d9-22a8940935a4",
-      "MasterFolder": {
-        "FolderName": "Development",
-        "PageId": "f5791f30-a1a2-4308-83c0-43467a4a042b",
-        "SubFolder": {
-          "FolderName": "Project",
-          "PageId": "f23c7131-0c53-4634-9da6-f996015f0276"
-        }
-      }
-    },
-    {
-      "TagName": ".Development.PJ.PlayListBot.Task",
-      "PageId": "f9d27581-e0d6-4e30-9c58-ab19098315de",
-      "MasterFolder": {
-        "FolderName": "Development",
-        "PageId": "f5791f30-a1a2-4308-83c0-43467a4a042b",
-        "SubFolder": {
-          "FolderName": "Project",
-          "PageId": "f23c7131-0c53-4634-9da6-f996015f0276"
+          "FolderName": "Task",
+          "PageId": "2d2bafca-5a6c-4935-9c9d-db45aa5da601"
         }
       }
     },
@@ -157,8 +105,8 @@
         "FolderName": "Development",
         "PageId": "f5791f30-a1a2-4308-83c0-43467a4a042b",
         "SubFolder": {
-          "FolderName": "Project",
-          "PageId": "f23c7131-0c53-4634-9da6-f996015f0276"
+          "FolderName": "Task",
+          "PageId": "2d2bafca-5a6c-4935-9c9d-db45aa5da601"
         }
       }
     },
@@ -169,14 +117,38 @@
         "FolderName": "Development",
         "PageId": "f5791f30-a1a2-4308-83c0-43467a4a042b",
         "SubFolder": {
-          "FolderName": "Project",
-          "PageId": "f23c7131-0c53-4634-9da6-f996015f0276"
+          "FolderName": "Task",
+          "PageId": "2d2bafca-5a6c-4935-9c9d-db45aa5da601"
         }
       }
     },
     {
       "TagName": ".Development.Task",
-      "PageId": "7b116600-a21a-4323-8b50-c19720bfd5cc",
+      "PageId": "dde59007-da9e-4fa6-a48f-e5a6a001185b",
+      "MasterFolder": {
+        "FolderName": "Development",
+        "PageId": "f5791f30-a1a2-4308-83c0-43467a4a042b",
+        "SubFolder": {
+          "FolderName": "Task",
+          "PageId": "2d2bafca-5a6c-4935-9c9d-db45aa5da601"
+        }
+      }
+    },
+    {
+      "TagName": ".Development.Task.NotionMasterBot",
+      "PageId": "7ed7b0fc-1714-41e9-b1d9-22a8940935a4",
+      "MasterFolder": {
+        "FolderName": "Development",
+        "PageId": "f5791f30-a1a2-4308-83c0-43467a4a042b",
+        "SubFolder": {
+          "FolderName": "Task",
+          "PageId": "2d2bafca-5a6c-4935-9c9d-db45aa5da601"
+        }
+      }
+    },
+    {
+      "TagName": ".Development.Task.PlayListBot",
+      "PageId": "f9d27581-e0d6-4e30-9c58-ab19098315de",
       "MasterFolder": {
         "FolderName": "Development",
         "PageId": "f5791f30-a1a2-4308-83c0-43467a4a042b",
@@ -235,6 +207,18 @@
       }
     },
     {
+      "TagName": ".Input.Game.Palworld",
+      "PageId": "bac09c6b-2aff-45f5-ac3d-54132507f367",
+      "MasterFolder": {
+        "FolderName": "Input",
+        "PageId": "b3a069ee-4d37-4d09-abbf-8c1e9f017b94",
+        "SubFolder": {
+          "FolderName": "Game",
+          "PageId": "90aceb3b-9cb6-4b2f-8403-53706e8c9bad"
+        }
+      }
+    },
+    {
       "TagName": ".Input.Game.Raft",
       "PageId": "2aca8e2d-e1bf-43e8-9c75-bcc4ef8aa591",
       "MasterFolder": {
@@ -273,6 +257,18 @@
     {
       "TagName": ".Input.Infomation.Art",
       "PageId": "d9a35828-140a-4f2f-a3a9-7b2cb63a5915",
+      "MasterFolder": {
+        "FolderName": "Input",
+        "PageId": "b3a069ee-4d37-4d09-abbf-8c1e9f017b94",
+        "SubFolder": {
+          "FolderName": "Infomation",
+          "PageId": "34b4a2be-94f9-41b6-bd72-ede4484968ce"
+        }
+      }
+    },
+    {
+      "TagName": ".Input.Infomation.Device",
+      "PageId": "e1fad08c-f9fe-4f3f-8dbd-adb5c75416ec",
       "MasterFolder": {
         "FolderName": "Input",
         "PageId": "b3a069ee-4d37-4d09-abbf-8c1e9f017b94",

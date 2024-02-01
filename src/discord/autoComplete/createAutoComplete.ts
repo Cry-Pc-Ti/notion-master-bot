@@ -18,7 +18,11 @@ export const queryAutoCompleteChoice = (folder: string, folderName: string) => {
 
     for (const tag of jsonData.Tag) {
       if (folder === 'masterFolder') {
-        if (tag.SubFolder && tag.SubFolder.FolderName && tag.SubFolder.FolderName === folderName) {
+        if (
+          tag.MasterFolder.SubFolder &&
+          tag.MasterFolder.SubFolder.FolderName &&
+          tag.MasterFolder.SubFolder.FolderName === folderName
+        ) {
           const folderName = tag.MasterFolder.FolderName;
           const pageId = tag.MasterFolder.PageId;
 
@@ -28,7 +32,11 @@ export const queryAutoCompleteChoice = (folder: string, folderName: string) => {
           }
         }
       } else if (folder === 'subFolder') {
-        if (tag.SubFolder && tag.SubFolder.FolderName && tag.SubFolder.FolderName === folderName) {
+        if (
+          tag.MasterFolder.SubFolder &&
+          tag.MasterFolder.SubFolder.FolderName &&
+          tag.MasterFolder.SubFolder.FolderName === folderName
+        ) {
           const tagName = tag.TagName;
           const pageId = tag.PageId;
 

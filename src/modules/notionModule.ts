@@ -7,7 +7,7 @@ import {
   GetPageResponse,
 } from '@notionhq/client/build/src/api-endpoints';
 import { PropertyFilter } from '../types/@notionhq/api-endpoints';
-import { NotionLibraryData, FolderData, TagData } from '../types/original/notion';
+import { NotionLibraryData, MasterFolderData, TagData } from '../types/original/notion';
 import { CreatePageResponse } from '@notionhq/client/build/src/api-endpoints';
 
 // ENVファイルの読み込み
@@ -29,7 +29,7 @@ export {
   GetPageResponse,
   PropertyFilter,
   NotionLibraryData,
-  FolderData as Folder,
+  MasterFolderData as Folder,
   TagData as Tag,
   CreatePageResponse,
 };

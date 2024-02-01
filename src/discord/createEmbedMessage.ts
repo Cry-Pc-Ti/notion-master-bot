@@ -1,3 +1,4 @@
+import { AttachmentBuilder } from 'discord.js';
 import { EmbedBuilder } from '../modules/discordModule';
 
 export const createDiaryMessage = {
@@ -153,9 +154,9 @@ export const createTaskMessage = {
   // タスク追加コマンドのメッセージを作成
   add(title: string, tag: string, pageData: { url: string; date?: string }) {
     // 埋め込みメッセージを作成
-    const embedMsg = new EmbedBuilder();
+    const embed = new EmbedBuilder();
     if (!pageData.date) {
-      embedMsg
+      embed
         .setTitle('Success: Task Entry Saved')
         .setURL(pageData.url)
         .setColor(7506394)
@@ -163,13 +164,12 @@ export const createTaskMessage = {
         .addFields({ name: 'Category', value: tag, inline: true })
         .setFooter({
           text: 'Notion',
-          iconURL:
-            'https://cdn.discordapp.com/attachments/896987534645669918/1134089854049861662/notion.png',
+          iconURL: 'attachment://notion-logo.png',
         })
         .setTimestamp();
 
       if (pageData.date) {
-        embedMsg.addFields({
+        embed.addFields({
           name: 'Deadline',
           value: pageData.date,
           inline: true,
@@ -177,6 +177,8 @@ export const createTaskMessage = {
       }
     }
 
-    return embedMsg;
+    const fotterAttachment = new AttachmentBuilder('img/notion-logo.png');
+
+    return { embeds: [embed], files: [fotterAttachment], components: [] };
   },
 };

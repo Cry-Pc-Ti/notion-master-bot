@@ -2,7 +2,7 @@ import { CreatePageResponse } from '@notionhq/client/build/src/api-endpoints';
 import { notion, masterDbId } from '../../modules/notionModule';
 import { isFullPage } from '@notionhq/client';
 
-export const insertTask = async (tagId: string, title: string, deadline: number) => {
+export const insertTask = async (tagId: string, title: string, deadline: number | null) => {
   let url: string = '';
   let date: string = '';
 
