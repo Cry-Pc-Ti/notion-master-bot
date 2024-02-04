@@ -1,20 +1,19 @@
-import { notion, masterDbId, isFullPage, CreatePageResponse } from '../../modules/notionModule';
+import { notion, masterDbId } from '../../../modules/notionModule';
+import { isFullPage } from '@notionhq/client';
+import { CreatePageResponse } from '@notionhq/client/build/src/api-endpoints';
 
-export const insertMemo = async (tagId: string, title: string, body: string | null) => {
-  const insertPageData: { title: string; body: string | null; url: string; tagName: string } = {
-    title: title,
-    body: body,
-    url: '',
-    tagName: '',
-  };
+export const insertTask = async (tagId: string, title: string, deadline: number | null) => {
+  let url: string = '';
+  let date: string = '';
 
   try {
-    if (!body) {
-      const memo: CreatePageResponse = await notion.pages.create({
+    // 期限なしの場合
+    if (!deadline) {
+      const task: CreatePageResponse = await notion.pages.create({
         icon: {
           type: 'external',
           external: {
-            url: 'https://www.notion.so/icons/document_gray.svg?mode=dark',
+            url: 'https://www.notion.so/icons/checkmark_gray.svg',
           },
         },
         parent: {
@@ -42,17 +41,25 @@ export const insertMemo = async (tagId: string, title: string, body: string | nu
         },
       });
 
-      if (isFullPage(memo)) {
-        insertPageData.url = memo.url;
+      if (isFullPage(task)) {
+        url = task.url;
       }
 
-      return insertPageData;
+      return { url, date };
+
+      // 期限ありの場合
     } else {
-      const memo: CreatePageResponse = await notion.pages.create({
+      const year = String(deadline).slice(0, 4);
+      const month = String(deadline).slice(4, 6);
+      const day = String(deadline).slice(6, 8);
+
+      date = `${year}-${month}-${day}`;
+
+      const task: CreatePageResponse = await notion.pages.create({
         icon: {
           type: 'external',
           external: {
-            url: 'https://www.notion.so/icons/document_gray.svg?mode=dark',
+            url: 'https://www.notion.so/icons/checkmark_gray.svg?mode=dark',
           },
         },
         parent: {
@@ -77,26 +84,22 @@ export const insertMemo = async (tagId: string, title: string, body: string | nu
               },
             ],
           },
-        },
-        children: [
-          {
-            object: 'block',
-            type: 'paragraph',
-            paragraph: {
-              rich_text: [{ type: 'text', text: { content: body } }],
+          Date: {
+            date: {
+              start: date,
             },
           },
-        ],
+        },
       });
 
-      if (isFullPage(memo)) {
-        insertPageData.url = memo.url;
+      if (isFullPage(task)) {
+        url = task.url;
       }
 
-      return insertPageData;
+      return { url, date };
     }
   } catch (error: unknown) {
     if (error instanceof Error) console.error('Error: ', error.message);
   }
-  return insertPageData;
+  return { url, date };
 };

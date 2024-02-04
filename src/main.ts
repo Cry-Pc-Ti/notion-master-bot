@@ -1,23 +1,13 @@
 // モジュールをインポート
-import {
-  Interaction,
-  REST,
-  Routes,
-  clientId,
-  guildId,
-  channelId,
-  discord,
-  token,
-} from './modules/discordModule';
+import { clientId, guildId, channelId, discord, token } from './modules/discordModule';
+import { Interaction, REST, Routes } from 'discord.js';
 import * as cron from 'node-cron';
 
-import { saveNotionLibraryData } from './notion/saveNotionLibraryData';
-
 // コマンドをインポート
-import { memoCommand } from './discord/commands/memoCommand';
-import { taskCommand } from './discord/commands/taskCommand';
-import { diaryCommand } from './discord/commands/diaryCommand';
 // import { clipCommand } from './discord/commands/clipCommand';
+// import { diaryCommand } from './events/discord/commands/diaryCommand';
+// import { memoCommand } from './events/discord/commands/memoCommand';
+import { taskCommand } from './events/discord/commands/taskCommand';
 
 // サーバーにコマンドを登録
 const rest = new REST({ version: '10' }).setToken(token);
@@ -25,9 +15,9 @@ const rest = new REST({ version: '10' }).setToken(token);
   try {
     await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
       body: [
-        memoCommand.data,
+        // memoCommand.data,
         taskCommand.data,
-        diaryCommand.data,
+        // diaryCommand.data,
         // clipCommand.data
       ],
     });
@@ -44,10 +34,10 @@ discord.once('ready', () => {
 
 // コマンドのオブジェクトを登録
 const commands = {
-  [memoCommand.data.name]: memoCommand,
-  [taskCommand.data.name]: taskCommand,
-  [diaryCommand.data.name]: diaryCommand,
   // [clipCommand.data.name]: clipCommand,
+  // [diaryCommand.data.name]: diaryCommand,
+  // [memoCommand.data.name]: memoCommand,
+  [taskCommand.data.name]: taskCommand,
 };
 
 // クライアントオブジェクトが準備完了時に実行

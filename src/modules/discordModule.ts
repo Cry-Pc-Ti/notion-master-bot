@@ -1,20 +1,5 @@
 // 必要なモジュールをインポート
-import {
-  Client,
-  GatewayIntentBits,
-  Events,
-  REST,
-  Routes,
-  SlashCommandBuilder,
-  EmbedBuilder,
-  Interaction,
-  AutocompleteInteraction,
-  ChatInputCommandInteraction,
-  StringSelectMenuInteraction,
-  Channel,
-  ChannelType,
-  ApplicationCommandOptionChoiceData,
-} from 'discord.js';
+import { Client, GatewayIntentBits } from 'discord.js';
 import dotenv from 'dotenv';
 
 // ENVファイルの読込み
@@ -29,22 +14,4 @@ const discord = new Client({
   intents: [GatewayIntentBits.Guilds],
 });
 
-export {
-  token,
-  clientId,
-  guildId,
-  channelId,
-  discord,
-  Events,
-  REST,
-  Routes,
-  SlashCommandBuilder,
-  EmbedBuilder,
-  Interaction,
-  AutocompleteInteraction,
-  ChatInputCommandInteraction,
-  StringSelectMenuInteraction,
-  Channel,
-  ChannelType,
-  ApplicationCommandOptionChoiceData,
-};
+export { token, clientId, guildId, channelId, discord };

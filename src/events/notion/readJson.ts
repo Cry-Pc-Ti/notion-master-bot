@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { NotionLibraryData } from '../modules/notionModule';
+import { NotionLibraryData } from '../../modules/notionModule';
 
 // JSONファイルの読み込み
 const fileData = fs.readFileSync('notion-data.json', 'utf-8');

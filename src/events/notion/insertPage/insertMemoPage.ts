@@ -1,19 +1,22 @@
-import { CreatePageResponse } from '@notionhq/client/build/src/api-endpoints';
-import { notion, masterDbId } from '../../modules/notionModule';
+import { notion, masterDbId } from '../../../modules/notionModule';
 import { isFullPage } from '@notionhq/client';
+import { CreatePageResponse } from '@notionhq/client/build/src/api-endpoints';
 
-export const insertTask = async (tagId: string, title: string, deadline: number | null) => {
-  let url: string = '';
-  let date: string = '';
+export const insertMemo = async (tagId: string, title: string, body: string | null) => {
+  const insertPageData: { title: string; body: string | null; url: string; tagName: string } = {
+    title: title,
+    body: body,
+    url: '',
+    tagName: '',
+  };
 
   try {
-    // 期限なしの場合
-    if (!deadline) {
-      const task: CreatePageResponse = await notion.pages.create({
+    if (!body) {
+      const memo: CreatePageResponse = await notion.pages.create({
         icon: {
           type: 'external',
           external: {
-            url: 'https://www.notion.so/icons/checkmark_gray.svg?mode=dark',
+            url: 'https://www.notion.so/icons/document_gray.svg',
           },
         },
         parent: {
@@ -41,25 +44,17 @@ export const insertTask = async (tagId: string, title: string, deadline: number 
         },
       });
 
-      if (isFullPage(task)) {
-        url = task.url;
+      if (isFullPage(memo)) {
+        insertPageData.url = memo.url;
       }
 
-      return { url, date };
-
-      // 期限ありの場合
+      return insertPageData;
     } else {
-      const year = String(deadline).slice(0, 4);
-      const month = String(deadline).slice(4, 6);
-      const day = String(deadline).slice(6, 8);
-
-      date = `${year}-${month}-${day}`;
-
-      const task: CreatePageResponse = await notion.pages.create({
+      const memo: CreatePageResponse = await notion.pages.create({
         icon: {
           type: 'external',
           external: {
-            url: 'https://www.notion.so/icons/checkmark_gray.svg?mode=dark',
+            url: 'https://www.notion.so/icons/document_gray.svg?mode=dark',
           },
         },
         parent: {
@@ -84,22 +79,26 @@ export const insertTask = async (tagId: string, title: string, deadline: number 
               },
             ],
           },
-          Date: {
-            date: {
-              start: date,
+        },
+        children: [
+          {
+            object: 'block',
+            type: 'paragraph',
+            paragraph: {
+              rich_text: [{ type: 'text', text: { content: body } }],
             },
           },
-        },
+        ],
       });
 
-      if (isFullPage(task)) {
-        url = task.url;
+      if (isFullPage(memo)) {
+        insertPageData.url = memo.url;
       }
 
-      return { url, date };
+      return insertPageData;
     }
   } catch (error: unknown) {
     if (error instanceof Error) console.error('Error: ', error.message);
   }
-  return { url, date };
+  return insertPageData;
 };

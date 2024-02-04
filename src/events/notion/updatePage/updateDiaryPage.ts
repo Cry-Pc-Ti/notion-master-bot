@@ -1,4 +1,4 @@
-import { notion } from '../../modules/notionModule';
+import { notion } from '../../../modules/notionModule';
 
 export const updateDiary = async (
   pageId: string,

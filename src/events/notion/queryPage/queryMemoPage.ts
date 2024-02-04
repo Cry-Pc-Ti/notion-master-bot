@@ -1,10 +1,7 @@
-import {
-  notion,
-  masterDbId,
-  QueryDatabaseResponse,
-  GetPageResponse,
-  isFullPage,
-} from '../../modules/notionModule';
+import { notion, masterDbId } from '../../../modules/notionModule';
+import { isFullPage } from '@notionhq/client';
+import { GetPageResponse } from '@notionhq/client/build/src/api-endpoints';
+import { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
 import { fetchRelationName } from '../fetchRelationName';
 
 export const queryMemoPage = async (folderId: string, query: string | null) => {

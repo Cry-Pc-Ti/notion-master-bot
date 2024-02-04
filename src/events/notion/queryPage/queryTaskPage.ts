@@ -1,14 +1,15 @@
-import {
-  notion,
-  masterDbId,
-  isFullPage,
-  PropertyFilter,
-  QueryDatabaseResponse,
-} from '../../modules/notionModule';
+import { notion, masterDbId } from '../../../modules/notionModule';
+import { isFullPage } from '@notionhq/client';
+import { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
+import { PropertyFilter } from '../../../types/@notionhq/api-endpoints';
 import { fetchRelationName } from '../fetchRelationName';
+import { jsonData } from '../readJson';
 
 export const queryTask = async (relativDate: string) => {
+  // タスクデータを格納する配列
+  const taskData: { title: string; tagName: string; pageId: string; url: string }[] = [];
   try {
+    // 現在日時を取得
     const d: Date = new Date();
     d.setTime(d.getTime() + 1000 * 60 * 60 * 9);
 
@@ -36,6 +37,14 @@ export const queryTask = async (relativDate: string) => {
       dateProperty = { property: 'Date', date: { is_empty: true } };
     }
 
+    // TaskフォルダのページIDを取得
+    const taskFolderPageId: string | undefined = jsonData.Folder.SubFolder.find(
+      (folder) => folder.FolderName === 'Task'
+    )?.PageId;
+
+    // タスクフォルダのページIDが取得できない場合、処理を終了
+    if (!taskFolderPageId) return taskData;
+
     // 日付比較からタスクのデータを取得
     const queryTaskData: QueryDatabaseResponse = await notion.databases.query({
       database_id: masterDbId,
@@ -47,7 +56,7 @@ export const queryTask = async (relativDate: string) => {
             rollup: {
               any: {
                 relation: {
-                  contains: '2d2bafca5a6c49359c9ddb45aa5da601',
+                  contains: taskFolderPageId,
                 },
               },
             },
@@ -63,14 +72,16 @@ export const queryTask = async (relativDate: string) => {
       ],
     });
 
-    const taskData: { title: string; tagName: string; id: string; url: string }[] = [];
-
-    if (!queryTaskData.results.length) return taskData;
+    // タスクデータがない場合、処理を終了
+    if (!queryTaskData.results.length) {
+      taskData.push({ title: '', tagName: '', pageId: '', url: '' });
+      return taskData;
+    }
 
     for (const data of queryTaskData.results) {
       const pageData = await notion.pages.retrieve({ page_id: data.id });
       if (isFullPage(pageData)) {
-        const id: string = pageData.id;
+        const pageId: string = pageData.id;
         const url: string = pageData.url;
 
         if (!('Title' in pageData.properties)) continue;
@@ -78,8 +89,8 @@ export const queryTask = async (relativDate: string) => {
         const title: string = pageData.properties.Title.title[0].plain_text;
 
         if (!('relation' in pageData.properties.Tag)) continue;
-        const tag: string = await fetchRelationName(pageData.properties.Tag.relation[0].id);
-        taskData.push({ title: title, tagName: tag, id: id, url: url });
+        const tagName: string = await fetchRelationName(pageData.properties.Tag.relation[0].id);
+        taskData.push({ title: title, tagName: tagName, pageId: pageId, url: url });
       }
     }
 
@@ -87,6 +98,6 @@ export const queryTask = async (relativDate: string) => {
   } catch (error: unknown) {
     if (error instanceof Error) console.error('Error: ', error.message);
 
-    return [];
+    return taskData;
   }
 };

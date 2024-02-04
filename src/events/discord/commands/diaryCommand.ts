@@ -1,7 +1,7 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction } from '../../modules/discordModule';
+import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
 import { queryDiaryPage } from '../../notion/queryPage/queryDiaryPage';
 import { updateDiary } from '../../notion/updatePage/updateDiaryPage';
-import { createDiaryMessage } from '../createEmbedMessage';
+import { createDiaryMessage } from '../embeds/createEmbeds';
 
 export const diaryCommand = {
   data: new SlashCommandBuilder()
@@ -89,10 +89,10 @@ export const diaryCommand = {
       await updateDiary(pageId, diaryTagId, happiness, lookback);
 
       // 埋め込みメッセージを作成
-      const embedMsg = createDiaryMessage.update(date, url);
+      const embeds = createDiaryMessage.update(date, url);
 
       // メッセージを送信
-      await interaction.editReply({ embeds: [embedMsg] });
+      await interaction.editReply(embeds);
     } catch (error: unknown) {
       await interaction.editReply('処理が失敗しました');
       console.error(error);

@@ -1,9 +1,9 @@
 // 必要なモジュールをインポート
 import * as fs from 'fs';
-import { ApplicationCommandOptionChoiceData } from '../../modules/discordModule';
-import { NotionLibraryData } from '../../types/original/notion';
+import { ApplicationCommandOptionChoiceData } from '../../../modules/discordModule';
+import { NotionLibraryData } from '../../../types/original/notion';
 
-export const queryAutoCompleteChoice = (folder: string, folderName: string) => {
+export const queryAutocompleteChoice = (folder: string, folderName: string) => {
   try {
     // JSONファイルの読み込み
     const fileData = fs.readFileSync('notion-data.json', 'utf-8');

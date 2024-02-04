@@ -1,5 +1,5 @@
-import { AttachmentBuilder } from 'discord.js';
-import { EmbedBuilder } from '../modules/discordModule';
+// 必要なモジュールをインポート
+import { EmbedBuilder, AttachmentBuilder } from 'discord.js';
 
 export const createDiaryMessage = {
   update(date: string, url: string) {
@@ -8,19 +8,20 @@ export const createDiaryMessage = {
     const dayOfWeek: string = days[new Date(date).getDay()];
 
     // 埋め込みメッセージを作成
-    const embedMsg = new EmbedBuilder()
+    const embed = new EmbedBuilder()
       .setTitle('Success: Diary Entry Saved')
       .setURL(url)
       .addFields({ name: 'Saved Diary', value: `${date} ${dayOfWeek}` })
       .setColor(7506394)
       .setFooter({
         text: 'Notion',
-        iconURL:
-          'https://cdn.discordapp.com/attachments/896987534645669918/1134089854049861662/notion.png',
+        iconURL: 'attachment://notion-logo.png',
       })
       .setTimestamp();
 
-    return embedMsg;
+    const fotterAttachment = new AttachmentBuilder('img/notion-logo.png');
+
+    return { embeds: [embed], files: [fotterAttachment] };
   },
 };
 
@@ -95,86 +96,73 @@ export const createSaveMessage = {
 
 export const createTaskMessage = {
   // タスク一覧表示コマンドのメッセージを作成
-  list(pageData: { title: string; tagName: string; id: string; url: string }[]) {
-    const embedMsg = new EmbedBuilder()
+  list(pageData: { title: string; tagName: string; pageId: string; url: string }[]) {
+    const embed = new EmbedBuilder()
       .setTitle('Task List')
+      .setURL(
+        'https://www.notion.so/53b960ffc0134a33901e052276059d3c?v=899332e84d3846438c19a5912ef0aa18&pvs=4'
+      )
       .setColor(7506394)
       .setFooter({
         text: 'Notion',
-        iconURL:
-          'https://cdn.discordapp.com/attachments/896987534645669918/1134089854049861662/notion.png',
+        iconURL: 'attachment://notion-logo.png',
       })
       .setTimestamp();
 
-    // 各ビューのURLを添付
-    if (pageData[0].tagName.includes('.Life')) {
-      embedMsg.setURL(
-        'https://www.notion.so/616847e3c8084eb8a06ed16efe8cb096?v=80e244a29f9f415b9f09ad6bdc2c5d0d&pvs=4'
-      );
-    } else if (pageData[0].tagName.includes('.Development')) {
-      embedMsg.setURL(
-        'https://www.notion.so/616847e3c8084eb8a06ed16efe8cb096?v=ef0a966aa85b460595744171a2c43055&pvs=4'
-      );
-    } else if (pageData[0].tagName.includes('.Work')) {
-      embedMsg.setURL(
-        'https://www.notion.so/616847e3c8084eb8a06ed16efe8cb096?v=ae48d5292dca4a96bd67827c70df1dc4&pvs=4'
-      );
-    }
-
     for (let i = 0; i < pageData.length; i++) {
-      embedMsg.addFields({
+      embed.addFields({
         name: `${i + 1}. ${pageData[i].title}`,
         value: `:white_small_square:${pageData[i].tagName}\n:white_small_square:[Continue to Page](${pageData[i].url})`,
       });
     }
 
-    return embedMsg;
+    const fotterAttachment = new AttachmentBuilder('img/notion-logo.png');
+
+    return { embeds: [embed], files: [fotterAttachment], components: [] };
   },
 
   // タスクチェックコマンドのメッセージを作成
-  check(number: number, taskData: { title: string; tagName: string; id: string; url: string }[]) {
-    const embedMsg = new EmbedBuilder()
-      .setTitle('Checked Task')
-      .setURL(taskData[number].url)
+  check(taskData: { title: string; tagName: string; pageId: string; url: string }) {
+    const embed = new EmbedBuilder()
+      .setTitle('Nice Work!')
+      .setURL(taskData.url)
       .setColor(7506394)
       .addFields({
-        name: taskData[number].title,
-        value: taskData[number].tagName,
+        name: 'Checked Task',
+        value: `${taskData.title} (${taskData.tagName})`,
       })
       .setFooter({
         text: 'Notion',
-        iconURL:
-          'https://cdn.discordapp.com/attachments/896987534645669918/1134089854049861662/notion.png',
+        iconURL: 'attachment://notion-logo.png',
       })
       .setTimestamp();
 
-    return embedMsg;
+    const fotterAttachment = new AttachmentBuilder('img/notion-logo.png');
+
+    return { embeds: [embed], files: [fotterAttachment], components: [] };
   },
 
   // タスク追加コマンドのメッセージを作成
   add(title: string, tag: string, pageData: { url: string; date?: string }) {
     // 埋め込みメッセージを作成
-    const embed = new EmbedBuilder();
-    if (!pageData.date) {
-      embed
-        .setTitle('Success: Task Entry Saved')
-        .setURL(pageData.url)
-        .setColor(7506394)
-        .addFields({ name: 'Task', value: title })
-        .addFields({ name: 'Category', value: tag, inline: true })
-        .setFooter({
-          text: 'Notion',
-          iconURL: 'attachment://notion-logo.png',
-        })
-        .setTimestamp();
+    const embed = new EmbedBuilder()
+      .setTitle('Saved New Task')
+      .setURL(pageData.url)
+      .setColor(7506394)
+      .addFields({ name: 'Task', value: title })
+      .addFields({ name: 'Tag', value: tag, inline: true })
+      .setFooter({
+        text: 'Notion',
+        iconURL: 'attachment://notion-logo.png',
+      })
+      .setTimestamp();
 
-      if (pageData.date) {
-        embed.addFields({
-          name: 'Deadline',
-          value: pageData.date,
-          inline: true,
-        });
-      }
+    if (pageData.date) {
+      embed.addFields({
+        name: 'Deadline',
+        value: pageData.date,
+        inline: true,
+      });
     }
 
     const fotterAttachment = new AttachmentBuilder('img/notion-logo.png');

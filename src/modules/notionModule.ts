@@ -1,14 +1,7 @@
 // 必要なモジュールをインポート
 import * as dotenv from 'dotenv';
-import { Client, isFullPage } from '@notionhq/client';
-import {
-  PageObjectResponse,
-  QueryDatabaseResponse,
-  GetPageResponse,
-} from '@notionhq/client/build/src/api-endpoints';
-import { PropertyFilter } from '../types/@notionhq/api-endpoints';
+import { Client } from '@notionhq/client';
 import { NotionLibraryData, MasterFolderData, TagData } from '../types/original/notion';
-import { CreatePageResponse } from '@notionhq/client/build/src/api-endpoints';
 
 // ENVファイルの読み込み
 dotenv.config();
@@ -23,13 +16,7 @@ export {
   masterDbId,
   folderDbId,
   tagDbId,
-  PageObjectResponse,
-  QueryDatabaseResponse,
-  isFullPage,
-  GetPageResponse,
-  PropertyFilter,
   NotionLibraryData,
   MasterFolderData as Folder,
   TagData as Tag,
-  CreatePageResponse,
 };

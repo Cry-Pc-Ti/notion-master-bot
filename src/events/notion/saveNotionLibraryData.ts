@@ -1,13 +1,8 @@
 // モジュールをインポート
 import * as fs from 'fs';
-import {
-  notion,
-  folderDbId,
-  tagDbId,
-  isFullPage,
-  GetPageResponse,
-  NotionLibraryData,
-} from '../modules/notionModule';
+import { notion, folderDbId, tagDbId, NotionLibraryData } from '../../modules/notionModule';
+import { isFullPage } from '@notionhq/client';
+import { GetPageResponse } from '@notionhq/client/build/src/api-endpoints';
 import { fetchRelationName } from './fetchRelationName';
 
 // フォルダ・タグライブラリからデータを取得し、JSON形式で保存
@@ -85,7 +80,14 @@ export const saveNotionLibraryData = async () => {
         });
 
         // サブフォルダのデータを格納
-        notionLibraryData.Folder.SubFolder.push(...subFolderData);
+        notionLibraryData.Folder.SubFolder.push(
+          ...subFolderData.filter(
+            (data) =>
+              !notionLibraryData.Folder.SubFolder.some(
+                (existingData) => existingData.PageId === data.PageId
+              )
+          )
+        );
       }
     }
 
@@ -174,10 +176,7 @@ export const saveNotionLibraryData = async () => {
     console.log('NotionライブラリのデータをJSONとして保存しました。');
   } catch (error: unknown) {
     if (error instanceof Error)
-      console.error(
-        'Notionライブラリのデータ取得及び保存中にエラーが発生しました。: ',
-        error.message
-      );
+      console.error('Notionライブラリのデータ取得及び保存中にエラーが発生しました。: ', error);
   }
 };
 

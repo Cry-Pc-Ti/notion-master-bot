@@ -2,12 +2,11 @@ import {
   SlashCommandBuilder,
   AutocompleteInteraction,
   ChatInputCommandInteraction,
-} from '../../modules/discordModule';
+} from 'discord.js';
 import { insertMemo } from '../../notion/insertPage/insertMemoPage';
 import { queryMemoPage } from '../../notion/queryPage/queryMemoPage';
 import { fetchRelationName } from '../../notion/fetchRelationName';
-import { createMemoMessage } from '../createEmbedMessage';
-import { queryAutoCompleteChoice } from '../autoComplete/createAutoComplete';
+import { createMemoMessage } from '../embeds/createEmbeds';
 
 export const memoCommand = {
   // スラッシュコマンドの定義
@@ -48,16 +47,16 @@ export const memoCommand = {
 
     // optionがtagの場合
     if (forcusedOption.name === 'tag') {
-      // AutoCompleteの情報を取得
-      const autoCompleteChoice = queryAutoCompleteChoice('subFolder', 'Memo');
-      // autocompleteを登録
+      // Autocompleteの情報を取得
+      const autoCompleteChoice = queryAutocompleteChoice('subFolder', 'Memo');
+      // Autocompleteを登録
       await interaction.respond(autoCompleteChoice);
 
       // optionがcategoryの場合
     } else if (forcusedOption.name === 'category') {
-      // AutoCompleteの情報を取得
-      const autoCompleteChoice = queryAutoCompleteChoice('masterFolder', 'Memo');
-      // autocompleteを登録
+      // Autocompleteの情報を取得
+      const autoCompleteChoice = queryAutocompleteChoice('masterFolder', 'Memo');
+      // Autocompleteを登録
       await interaction.respond(autoCompleteChoice);
     }
   },

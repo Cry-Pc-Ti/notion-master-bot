@@ -1,4 +1,6 @@
-import { notion, masterDbId, isFullPage, CreatePageResponse } from '../../modules/notionModule';
+import { notion, masterDbId } from '../../../modules/notionModule';
+import { isFullPage } from '@notionhq/client';
+import { CreatePageResponse } from '@notionhq/client/build/src/api-endpoints';
 
 export const insertClip = async (
   faviconUrl: string,

@@ -1,4 +1,5 @@
-import { notion, isFullPage } from '../modules/notionModule';
+import { notion } from '../../modules/notionModule';
+import { isFullPage } from '@notionhq/client';
 
 export const fetchRelationName = async (pageId: string) => {
   let title: string = '';

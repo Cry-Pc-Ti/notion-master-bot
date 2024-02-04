@@ -4,14 +4,14 @@
       {
         "FolderName": "Development",
         "PageId": "f5791f30-a1a2-4308-83c0-43467a4a042b",
-        "SubFolder": [
+        "SubFolderPageId": [
           "2d2bafca-5a6c-4935-9c9d-db45aa5da601"
         ]
       },
       {
         "FolderName": "Input",
         "PageId": "b3a069ee-4d37-4d09-abbf-8c1e9f017b94",
-        "SubFolder": [
+        "SubFolderPageId": [
           "33bd7f0b-f8b9-4285-bf9f-e544863aba0a",
           "24595a33-9c6d-439f-adbb-df066479d021",
           "90aceb3b-9cb6-4b2f-8403-53706e8c9bad",
@@ -21,14 +21,14 @@
       {
         "FolderName": "Life",
         "PageId": "8c3cb6f2-c746-42d7-8c72-2f1c38931317",
-        "SubFolder": [
+        "SubFolderPageId": [
           "2d2bafca-5a6c-4935-9c9d-db45aa5da601"
         ]
       },
       {
         "FolderName": "Thinking",
         "PageId": "fcb6115d-e9c4-43cd-a482-b5c3650e757d",
-        "SubFolder": [
+        "SubFolderPageId": [
           "4796ee2f-0a0a-44df-b4b8-430745630a8a",
           "4cdb1ed4-d7e1-4be7-a736-4e730c62db60"
         ]
@@ -36,7 +36,7 @@
       {
         "FolderName": "Work",
         "PageId": "117ba933-1d9a-4a31-b536-01216c1ef5f6",
-        "SubFolder": [
+        "SubFolderPageId": [
           "2d2bafca-5a6c-4935-9c9d-db45aa5da601",
           "4796ee2f-0a0a-44df-b4b8-430745630a8a"
         ]
@@ -64,64 +64,16 @@
         "PageId": "34b4a2be-94f9-41b6-bd72-ede4484968ce"
       },
       {
-        "FolderName": "Task",
-        "PageId": "2d2bafca-5a6c-4935-9c9d-db45aa5da601"
-      },
-      {
         "FolderName": "Memo",
         "PageId": "4796ee2f-0a0a-44df-b4b8-430745630a8a"
       },
       {
         "FolderName": "Diary",
         "PageId": "4cdb1ed4-d7e1-4be7-a736-4e730c62db60"
-      },
-      {
-        "FolderName": "Task",
-        "PageId": "2d2bafca-5a6c-4935-9c9d-db45aa5da601"
-      },
-      {
-        "FolderName": "Memo",
-        "PageId": "4796ee2f-0a0a-44df-b4b8-430745630a8a"
       }
     ]
   },
   "Tag": [
-    {
-      "TagName": ".Development.PJ.CreateDiary.Task",
-      "PageId": "33b464c3-e5ca-4a24-9a2a-c9299afd8ca7",
-      "MasterFolder": {
-        "FolderName": "Development",
-        "PageId": "f5791f30-a1a2-4308-83c0-43467a4a042b",
-        "SubFolder": {
-          "FolderName": "Task",
-          "PageId": "2d2bafca-5a6c-4935-9c9d-db45aa5da601"
-        }
-      }
-    },
-    {
-      "TagName": ".Development.PJ.SaveTweetToNotion.Task",
-      "PageId": "20c6b193-d97d-4854-b5b7-2055abe0c781",
-      "MasterFolder": {
-        "FolderName": "Development",
-        "PageId": "f5791f30-a1a2-4308-83c0-43467a4a042b",
-        "SubFolder": {
-          "FolderName": "Task",
-          "PageId": "2d2bafca-5a6c-4935-9c9d-db45aa5da601"
-        }
-      }
-    },
-    {
-      "TagName": ".Development.PJ.SaveTweetToNotion.Task",
-      "PageId": "4cfe8e25-c269-44aa-b92f-1b232caa512b",
-      "MasterFolder": {
-        "FolderName": "Development",
-        "PageId": "f5791f30-a1a2-4308-83c0-43467a4a042b",
-        "SubFolder": {
-          "FolderName": "Task",
-          "PageId": "2d2bafca-5a6c-4935-9c9d-db45aa5da601"
-        }
-      }
-    },
     {
       "TagName": ".Development.Task",
       "PageId": "dde59007-da9e-4fa6-a48f-e5a6a001185b",
@@ -281,6 +233,18 @@
     {
       "TagName": ".Input.Infomation.Recipe",
       "PageId": "04dc4264-97b7-4ee5-8b83-6be48e4ee6ea",
+      "MasterFolder": {
+        "FolderName": "Input",
+        "PageId": "b3a069ee-4d37-4d09-abbf-8c1e9f017b94",
+        "SubFolder": {
+          "FolderName": "Infomation",
+          "PageId": "34b4a2be-94f9-41b6-bd72-ede4484968ce"
+        }
+      }
+    },
+    {
+      "TagName": ".Input.Infomation.Trivia",
+      "PageId": "55dea876-f9ff-4ea2-a6f7-8caff0dc6f54",
       "MasterFolder": {
         "FolderName": "Input",
         "PageId": "b3a069ee-4d37-4d09-abbf-8c1e9f017b94",

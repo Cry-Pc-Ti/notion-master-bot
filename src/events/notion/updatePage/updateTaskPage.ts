@@ -1,8 +1,7 @@
-import { notion } from '../../modules/notionModule';
+import { notion } from '../../../modules/notionModule';
 
-export const updateTask = async (number: number, taskData: { id: string }[]) => {
+export const updateTask = async (pageId: string) => {
   try {
-    const pageId = taskData[number].id;
     await notion.pages.update({
       page_id: pageId,
       properties: {
