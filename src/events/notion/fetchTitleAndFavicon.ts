@@ -13,8 +13,8 @@ export const fetchTitleAndFavicon = async (siteUrl: string) => {
     const response = await axios.get(siteUrl);
     const $ = cheerio.load(response.data);
     fetchResult.title = $('title').text();
-  } catch (error: unknown) {
-    if (error instanceof Error) console.error('Error Fetching Data:', error.message);
+  } catch (error) {
+    console.error('Error Fetching Data:', error);
 
     return fetchResult;
   }

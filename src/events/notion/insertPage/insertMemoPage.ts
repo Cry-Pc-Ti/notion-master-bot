@@ -97,8 +97,8 @@ export const insertMemo = async (tagId: string, title: string, body: string | nu
 
       return insertPageData;
     }
-  } catch (error: unknown) {
-    if (error instanceof Error) console.error('Error: ', error.message);
+  } catch (error) {
+    console.error('Notion DB Error : ', error);
   }
   return insertPageData;
 };

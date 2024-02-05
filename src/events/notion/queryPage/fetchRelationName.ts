@@ -1,4 +1,4 @@
-import { notion } from '../../modules/notionModule';
+import { notion } from '../../../modules/notionModule';
 import { isFullPage } from '@notionhq/client';
 
 export const fetchRelationName = async (pageId: string) => {
@@ -18,8 +18,8 @@ export const fetchRelationName = async (pageId: string) => {
 
     // ページタイトルを返却
     return title;
-  } catch (error: unknown) {
-    if (error instanceof Error) console.error('Error: ', error.message);
+  } catch (error) {
+    console.error('Notion DB Error : ', error);
     return title;
   }
 };

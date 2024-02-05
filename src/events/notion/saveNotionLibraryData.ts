@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import { notion, folderDbId, tagDbId, NotionLibraryData } from '../../modules/notionModule';
 import { isFullPage } from '@notionhq/client';
 import { GetPageResponse } from '@notionhq/client/build/src/api-endpoints';
-import { fetchRelationName } from './fetchRelationName';
+import { fetchRelationName } from './queryPage/fetchRelationName';
 
 // フォルダ・タグライブラリからデータを取得し、JSON形式で保存
 export const saveNotionLibraryData = async () => {
@@ -174,9 +174,8 @@ export const saveNotionLibraryData = async () => {
     // データをJSON形式で保存
     fs.writeFileSync('notion-data.json', JSON.stringify(notionLibraryData, null, 2));
     console.log('NotionライブラリのデータをJSONとして保存しました。');
-  } catch (error: unknown) {
-    if (error instanceof Error)
-      console.error('Notionライブラリのデータ取得及び保存中にエラーが発生しました。: ', error);
+  } catch (error) {
+    console.error('Notionライブラリのデータ取得及び保存中にエラーが発生しました。: ', error);
   }
 };
 

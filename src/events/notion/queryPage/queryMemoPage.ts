@@ -2,7 +2,7 @@ import { notion, masterDbId } from '../../../modules/notionModule';
 import { isFullPage } from '@notionhq/client';
 import { GetPageResponse } from '@notionhq/client/build/src/api-endpoints';
 import { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
-import { fetchRelationName } from '../fetchRelationName';
+import { fetchRelationName } from './fetchRelationName';
 
 export const queryMemoPage = async (folderId: string, query: string | null) => {
   try {
@@ -100,10 +100,7 @@ export const queryMemoPage = async (folderId: string, query: string | null) => {
     }
 
     return memoData;
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error('Error: ', error.message);
-      throw error;
-    }
+  } catch (error) {
+    console.error('Notion DB Error : ', error);
   }
 };

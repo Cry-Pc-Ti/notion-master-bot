@@ -2,12 +2,13 @@ import { notion, masterDbId } from '../../../modules/notionModule';
 import { isFullPage } from '@notionhq/client';
 import { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
 import { PropertyFilter } from '../../../types/@notionhq/api-endpoints';
-import { fetchRelationName } from '../fetchRelationName';
+import { fetchRelationName } from './fetchRelationName';
 import { jsonData } from '../readJson';
+import { TaskData } from '../../../types/original/notion';
 
 export const queryTask = async (relativDate: string) => {
   // タスクデータを格納する配列
-  const taskData: { title: string; tagName: string; pageId: string; url: string }[] = [];
+  const taskData: TaskData[] = [];
   try {
     // 現在日時を取得
     const d: Date = new Date();
@@ -95,9 +96,8 @@ export const queryTask = async (relativDate: string) => {
     }
 
     return taskData;
-  } catch (error: unknown) {
-    if (error instanceof Error) console.error('Error: ', error.message);
-
+  } catch (error) {
+    console.error('Notion DB Error : ', error);
     return taskData;
   }
 };

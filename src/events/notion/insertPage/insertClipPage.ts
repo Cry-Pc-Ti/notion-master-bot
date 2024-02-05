@@ -54,10 +54,7 @@ export const insertClip = async (
     }
 
     return insertPageData;
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error('Notion DB Error: ', error.message);
-      throw error;
-    }
+  } catch (error) {
+    console.error('Notion DB Error : ', error);
   }
 };

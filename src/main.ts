@@ -15,14 +15,14 @@ const rest = new REST({ version: '10' }).setToken(token);
   try {
     await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
       body: [
+        // clipCommand.data
+        // diaryCommand.data,
         // memoCommand.data,
         taskCommand.data,
-        // diaryCommand.data,
-        // clipCommand.data
       ],
     });
     console.log('サーバー固有のコマンドが登録されました');
-  } catch (error: unknown) {
+  } catch (error) {
     console.error('コマンドの登録中にエラーが発生しました：', error);
   }
 })();
@@ -50,8 +50,8 @@ discord.on('interactionCreate', async (interaction: Interaction) => {
     if (command) {
       try {
         await command.execute(interaction);
-      } catch (error: unknown) {
-        console.error(error);
+      } catch (error) {
+        console.error(`コマンド実行中にエラーが発生しました。: ${error}`);
         await interaction.reply('処理が失敗しました');
       }
     }
@@ -59,8 +59,13 @@ discord.on('interactionCreate', async (interaction: Interaction) => {
 
   // AutoCompleteの登録
   if (interaction.isAutocomplete()) {
-    if (interaction.commandName === taskCommand.data.name) {
-      await taskCommand.autocomplete(interaction);
+    // コマンド名を取得
+    const command = commands[interaction.commandName];
+    if (command) {
+      try {
+      } catch (error) {
+        console.error(`Autocompleteの登録中にエラーが発生しました。: ${error}`);
+      }
     }
   }
 });

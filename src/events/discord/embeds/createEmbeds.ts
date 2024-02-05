@@ -1,5 +1,6 @@
 // 必要なモジュールをインポート
 import { EmbedBuilder, AttachmentBuilder } from 'discord.js';
+import { TaskData } from '../../../types/original/notion';
 
 export const createDiaryMessage = {
   update(date: string, url: string) {
@@ -122,20 +123,22 @@ export const createTaskMessage = {
   },
 
   // タスクチェックコマンドのメッセージを作成
-  check(taskData: { title: string; tagName: string; pageId: string; url: string }) {
+  check(taskData: TaskData[]) {
     const embed = new EmbedBuilder()
-      .setTitle('Nice Work!')
-      .setURL(taskData.url)
+      .setTitle('Nice Work! Task Checked')
       .setColor(7506394)
-      .addFields({
-        name: 'Checked Task',
-        value: `${taskData.title} (${taskData.tagName})`,
-      })
       .setFooter({
         text: 'Notion',
         iconURL: 'attachment://notion-logo.png',
       })
       .setTimestamp();
+
+    for (let i = 0; i < taskData.length; i++) {
+      embed.addFields({
+        name: `${i + 1}. ${taskData[i].title} (${taskData[i].tagName})`,
+        value: `:white_small_square:[Continue to Page](${taskData[i].url})`,
+      });
+    }
 
     const fotterAttachment = new AttachmentBuilder('img/notion-logo.png');
 

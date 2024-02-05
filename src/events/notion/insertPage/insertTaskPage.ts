@@ -98,8 +98,8 @@ export const insertTask = async (tagId: string, title: string, deadline: number 
 
       return { url, date };
     }
-  } catch (error: unknown) {
-    if (error instanceof Error) console.error('Error: ', error.message);
+  } catch (error) {
+    console.error('Notion DB Error : ', error);
   }
   return { url, date };
 };

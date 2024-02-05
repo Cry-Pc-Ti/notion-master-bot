@@ -28,3 +28,10 @@ export interface NotionLibraryData {
   Folder: FolderData;
   Tag: TagData[];
 }
+
+export interface TaskData {
+  title: string;
+  tagName: string;
+  pageId: string;
+  url: string;
+}

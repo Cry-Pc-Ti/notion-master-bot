@@ -58,10 +58,7 @@ export const queryDiaryPage = async (relativDate: string, diaryTagId: string) =>
       console.log('該当するデータがありませんでした');
       return undefined;
     }
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error('Error: ', error.message);
-      throw error;
-    }
+  } catch (error) {
+    console.error('Notion DB Error : ', error);
   }
 };

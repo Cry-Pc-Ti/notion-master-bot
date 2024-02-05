@@ -14,8 +14,9 @@ import { queryTask } from '../../notion/queryPage/queryTaskPage';
 import { updateTask } from '../../notion/updatePage/updateTaskPage';
 import { insertTask } from '../../notion/insertPage/insertTaskPage';
 import { createTaskMessage } from '../embeds/createEmbeds';
-import { fetchRelationName } from '../../notion/fetchRelationName';
+import { fetchRelationName } from '../../notion/queryPage/fetchRelationName';
 import { jsonData } from '../../notion/readJson';
+import { TaskData } from '../../../types/original/notion';
 
 export const taskCommand = {
   // スラッシュコマンドの定義
@@ -135,7 +136,7 @@ export const taskCommand = {
           }
 
           // 相対日付をもとにタスクを取得
-          const taskData = await queryTask(relativDate);
+          const taskData: TaskData[] = await queryTask(relativDate);
 
           // タスクデータが空の場合、処理を終了
           if (!taskData.length) {
@@ -190,11 +191,15 @@ export const taskCommand = {
 
           // タスクがある場合の処理
         } else {
+          // タスクの件数を取得
+          const taskCount: number = allTaskData.length;
+
           // セレクトメニューを作成
           const taskSelectMenu: StringSelectMenuBuilder = new StringSelectMenuBuilder()
             .setCustomId('task')
             .setPlaceholder('Select Completed Task')
             .setMinValues(1)
+            .setMaxValues(taskCount)
             .addOptions(
               allTaskData.map((task) => ({
                 label: `${task.title} (${task.tagName})`,
@@ -216,20 +221,26 @@ export const taskCommand = {
           });
 
           collector.on('collect', async (selectMenuInteraction: StringSelectMenuInteraction) => {
-            const checkTaskPageId = selectMenuInteraction.values[0];
-            await updateTask(checkTaskPageId);
+            const checkTaskPageId = selectMenuInteraction.values;
+            const checkedTaskData: TaskData[] = [];
 
-            // 完了済みタスクデータを取得
-            const checkTaskData = allTaskData.find((task) => task.pageId === checkTaskPageId);
+            for (const pageId of checkTaskPageId) {
+              // セレクトメニューで選択されたタスクを完了済みに更新
+              await updateTask(pageId);
+
+              // 完了済みのタスクデータを取得
+              const task = allTaskData.find((task) => task.pageId === pageId);
+              if (task) checkedTaskData.push(task);
+            }
 
             // 完了済みタスクデータが取得できない場合、処理を終了
-            if (!checkTaskData) {
+            if (!checkedTaskData.length) {
               await interaction.editReply('処理が失敗しました');
               return;
             }
 
             // 埋め込みメッセージを作成・送信
-            const embed = createTaskMessage.check(checkTaskData);
+            const embed = createTaskMessage.check(checkedTaskData);
             await interaction.editReply(embed);
           });
         }

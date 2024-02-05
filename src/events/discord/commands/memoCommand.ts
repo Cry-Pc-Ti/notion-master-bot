@@ -2,11 +2,13 @@ import {
   SlashCommandBuilder,
   AutocompleteInteraction,
   ChatInputCommandInteraction,
+  ApplicationCommandOptionChoiceData,
 } from 'discord.js';
 import { insertMemo } from '../../notion/insertPage/insertMemoPage';
 import { queryMemoPage } from '../../notion/queryPage/queryMemoPage';
-import { fetchRelationName } from '../../notion/fetchRelationName';
+import { fetchRelationName } from '../../notion/queryPage/fetchRelationName';
 import { createMemoMessage } from '../embeds/createEmbeds';
+import { jsonData } from '../../notion/readJson';
 
 export const memoCommand = {
   // スラッシュコマンドの定義
@@ -18,12 +20,16 @@ export const memoCommand = {
         .setName('add')
         .setDescription('Add Memo')
         .addStringOption((option) =>
-          option.setName('tag').setDescription('Select Tag').setAutocomplete(true).setRequired(true)
-        )
-        .addStringOption((option) =>
           option.setName('title').setDescription('Set Title').setRequired(true)
         )
         .addStringOption((option) => option.setName('body').setDescription('Set Body'))
+        .addStringOption((option) =>
+          option
+            .setName('folder')
+            .setDescription('Select folder')
+            .setAutocomplete(true)
+            .setRequired(true)
+        )
     )
     .addSubcommand((command) =>
       command
@@ -31,8 +37,8 @@ export const memoCommand = {
         .setDescription('Search Memo')
         .addStringOption((option) =>
           option
-            .setName('category')
-            .setDescription('Select Category')
+            .setName('folder')
+            .setDescription('Select Folder')
             .setAutocomplete(true)
             .setRequired(true)
         )
@@ -46,18 +52,36 @@ export const memoCommand = {
     const forcusedOption = interaction.options.getFocused(true);
 
     // optionがtagの場合
-    if (forcusedOption.name === 'tag') {
+    if (forcusedOption.name === 'folder') {
       // Autocompleteの情報を取得
-      const autoCompleteChoice = queryAutocompleteChoice('subFolder', 'Memo');
-      // Autocompleteを登録
-      await interaction.respond(autoCompleteChoice);
+      const autocompleteChoice: ApplicationCommandOptionChoiceData[] = [];
 
-      // optionがcategoryの場合
-    } else if (forcusedOption.name === 'category') {
-      // Autocompleteの情報を取得
-      const autoCompleteChoice = queryAutocompleteChoice('masterFolder', 'Memo');
+      // 重複を確認するためのセット
+      const addedFolder: Set<string> = new Set();
+
+      // MemoフォルダのページIDを取得
+      const memoFolderPageId: string | undefined = jsonData.Folder.SubFolder.find(
+        (folder) => folder.FolderName === 'Memo'
+      )?.PageId;
+
+      // サブフォルダページIDがMemoのマスタフォルダを取得
+      for (const masterFolder of jsonData.Folder.MasterFolder) {
+        if (
+          memoFolderPageId &&
+          masterFolder.SubFolderPageId &&
+          masterFolder.SubFolderPageId.includes(memoFolderPageId)
+        ) {
+          const folderName = masterFolder.FolderName;
+          const pageId = masterFolder.PageId;
+
+          if (!addedFolder.has(folderName)) {
+            autocompleteChoice.push({ name: folderName, value: pageId });
+            addedFolder.add(folderName);
+          }
+        }
+      }
       // Autocompleteを登録
-      await interaction.respond(autoCompleteChoice);
+      await interaction.respond(autocompleteChoice);
     }
   },
 
@@ -71,21 +95,23 @@ export const memoCommand = {
       // メモ追加処理
       if (subCommand === 'add') {
         // コマンドに入力された値を取得
-        const tagId: string | null = options.getString('tag');
         const title: string | null = options.getString('title');
         const body: string | null = options.getString('body');
+        const masterFolderId: string | null = options.getString('folder');
+
+        console.log(title, body, masterFolderId);
 
         // タイトルかタグがnullの場合、処理を中断
-        if (!tagId || !title) {
+        if (!masterFolderId || !title) {
           await interaction.editReply('処理が失敗しました');
           return;
         }
 
         // ページを作成
-        const insertPageData = await insertMemo(tagId, title, body);
+        const insertPageData = await insertMemo(masterFolderId, title, body);
 
         // タグ名を取得
-        const tagName = await fetchRelationName(tagId);
+        const tagName = await fetchRelationName(masterFolderId);
         insertPageData.tagName = tagName;
 
         // 埋め込みメッセージを作成
@@ -96,16 +122,16 @@ export const memoCommand = {
 
         // メモ検索処理
       } else if (subCommand === 'search') {
-        const folderId: string | null = options.getString('category');
+        const masterFolderId: string | null = options.getString('folder');
         const query: string | null = options.getString('query');
 
-        if (!folderId) {
+        if (!masterFolderId) {
           await interaction.editReply('処理が失敗しました');
           return;
         }
 
         // ページを検索
-        const memoData = await queryMemoPage(folderId, query);
+        const memoData = await queryMemoPage(masterFolderId, query);
 
         if (!memoData || !memoData.length) {
           interaction.editReply('指定の検索条件では見つかりませんでした');
