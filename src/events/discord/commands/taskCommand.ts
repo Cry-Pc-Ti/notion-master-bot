@@ -39,7 +39,6 @@ export const taskCommand = {
             )
             .setRequired(true)
         )
-        .addBooleanOption((option) => option.setName('all').setDescription('View All Task'))
     )
     .addSubcommand((command) =>
       command
