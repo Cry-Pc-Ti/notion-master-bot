@@ -147,7 +147,7 @@ export const clipCommand = {
       await fetchTitleAndFavicon(clipData);
 
       // タイトルとfaviconが取得できない場合、処理を終了
-      if (!clipData.title || !clipData.faviconUrl) {
+      if (!clipData.faviconUrl) {
         await interaction.editReply('処理が失敗しました');
         return;
       }

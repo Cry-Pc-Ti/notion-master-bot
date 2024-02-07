@@ -543,6 +543,30 @@
       }
     },
     {
+      "TagName": ".Life.Task",
+      "PageId": "6b544467-9358-45c2-a833-8b52bd7b4536",
+      "MasterFolder": {
+        "FolderName": "Life",
+        "PageId": "8c3cb6f2-c746-42d7-8c72-2f1c38931317",
+        "SubFolder": {
+          "FolderName": "Task",
+          "PageId": "2d2bafca-5a6c-4935-9c9d-db45aa5da601"
+        }
+      }
+    },
+    {
+      "TagName": ".Life.Task.Shopping",
+      "PageId": "7b33f128-4b55-404f-859c-10d12c1495fe",
+      "MasterFolder": {
+        "FolderName": "Life",
+        "PageId": "8c3cb6f2-c746-42d7-8c72-2f1c38931317",
+        "SubFolder": {
+          "FolderName": "Task",
+          "PageId": "2d2bafca-5a6c-4935-9c9d-db45aa5da601"
+        }
+      }
+    },
+    {
       "TagName": ".Thinking.Diary.★",
       "PageId": "6f0851c2-0aea-45d8-9921-74c86569ae48",
       "MasterFolder": {
@@ -599,6 +623,54 @@
         "SubFolder": {
           "FolderName": "Diary",
           "PageId": "4cdb1ed4-d7e1-4be7-a736-4e730c62db60"
+        }
+      }
+    },
+    {
+      "TagName": ".Thinking.Journaling",
+      "PageId": "40502e74-b35c-4c73-9933-97c423cccb8d",
+      "MasterFolder": {
+        "FolderName": "Thinking",
+        "PageId": "fcb6115d-e9c4-43cd-a482-b5c3650e757d",
+        "SubFolder": {
+          "FolderName": "Memo",
+          "PageId": "4796ee2f-0a0a-44df-b4b8-430745630a8a"
+        }
+      }
+    },
+    {
+      "TagName": ".Thinking.Memo",
+      "PageId": "6cca2e22-9982-48c3-b4d0-d9e9f9dab7ec",
+      "MasterFolder": {
+        "FolderName": "Thinking",
+        "PageId": "fcb6115d-e9c4-43cd-a482-b5c3650e757d",
+        "SubFolder": {
+          "FolderName": "Memo",
+          "PageId": "4796ee2f-0a0a-44df-b4b8-430745630a8a"
+        }
+      }
+    },
+    {
+      "TagName": ".Work.Memo",
+      "PageId": "96b7b105-686a-48e5-aba8-1902f2ae2035",
+      "MasterFolder": {
+        "FolderName": "Work",
+        "PageId": "117ba933-1d9a-4a31-b536-01216c1ef5f6",
+        "SubFolder": {
+          "FolderName": "Memo",
+          "PageId": "4796ee2f-0a0a-44df-b4b8-430745630a8a"
+        }
+      }
+    },
+    {
+      "TagName": ".Work.Task",
+      "PageId": "339b00e1-3cd5-47be-adcd-e79f51b354bf",
+      "MasterFolder": {
+        "FolderName": "Work",
+        "PageId": "117ba933-1d9a-4a31-b536-01216c1ef5f6",
+        "SubFolder": {
+          "FolderName": "Task",
+          "PageId": "2d2bafca-5a6c-4935-9c9d-db45aa5da601"
         }
       }
     }

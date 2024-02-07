@@ -103,6 +103,8 @@ export const memoCommand = {
         const body: string | null = options.getString('body');
         const masterFolderPageId: string | null = options.getString('folder');
 
+        console.log(masterFolderPageId);
+
         // 必須項目が入力されていない場合、処理終了
         if (!masterFolderPageId || !title) {
           await interaction.editReply('処理が失敗しました');
@@ -131,6 +133,7 @@ export const memoCommand = {
         const tagSelectMenu: StringSelectMenuBuilder = new StringSelectMenuBuilder()
           .setCustomId('tag')
           .setPlaceholder('Select Tag')
+          .setMinValues(1)
           .addOptions(matchingTags.map((tag) => ({ label: tag.TagName, value: tag.PageId })));
 
         // セレクトメニューを送信

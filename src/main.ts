@@ -89,15 +89,15 @@ discord.once('ready', () => {
   });
 });
 
-// 12時間ごとにNotionライブラリのデータを更新
-cron.schedule('0 */12 * * *', async () => {
-  try {
-    // Notionライブラリのデータを更新
-    await saveNotionLibraryData();
-  } catch (error) {
-    console.error('Notionライブラリの更新中にエラーが発生しました:', error);
-  }
-});
+// // 12時間ごとにNotionライブラリのデータを更新
+// cron.schedule('0 */12 * * *', async () => {
+//   try {
+//     // Notionライブラリのデータを更新
+//     await saveNotionLibraryData();
+//   } catch (error) {
+//     console.error('Notionライブラリの更新中にエラーが発生しました:', error);
+//   }
+// });
 
 // 1週間ごとに日記のページを作成
 cron.schedule('0 0 0 * * 0', async () => {
