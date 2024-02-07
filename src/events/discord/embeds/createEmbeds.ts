@@ -1,7 +1,30 @@
 // 必要なモジュールをインポート
 import { EmbedBuilder, AttachmentBuilder } from 'discord.js';
-import { TaskData } from '../../../types/original/notion';
+import { ClipData, TaskData } from '../../../types/original/notion';
 
+// Clipコマンドのメッセージを作成
+export const createClipMessage = {
+  insert(clipData: ClipData) {
+    // 埋め込みメッセージを作成
+    const embed = new EmbedBuilder()
+      .setTitle('Clip Saved')
+      .setURL(clipData.notionUrl)
+      .setColor(7506394)
+      .setThumbnail(clipData.faviconUrl)
+      .addFields({ name: 'Title', value: clipData.title })
+      .setFooter({
+        text: 'Notion',
+        iconURL: 'attachment://notion-logo.png',
+      })
+      .setTimestamp();
+
+    const fotterAttachment = new AttachmentBuilder('img/notion-logo.png');
+
+    return { embeds: [embed], files: [fotterAttachment], components: [] };
+  },
+};
+
+// Diaryコマンドのメッセージを作成
 export const createDiaryMessage = {
   update(date: string, url: string) {
     // 曜日を取得
@@ -10,7 +33,7 @@ export const createDiaryMessage = {
 
     // 埋め込みメッセージを作成
     const embed = new EmbedBuilder()
-      .setTitle('Success: Diary Entry Saved')
+      .setTitle('Saved Diary')
       .setURL(url)
       .addFields({ name: 'Saved Diary', value: `${date} ${dayOfWeek}` })
       .setColor(7506394)
@@ -26,77 +49,54 @@ export const createDiaryMessage = {
   },
 };
 
+// Memoコマンドのメッセージを作成
 export const createMemoMessage = {
-  // メモ追加メッセージを作成
-  insert(pageData: { title: string; body: string | null; url: string; tagName: string }) {
-    const embedMsg = new EmbedBuilder()
-      .setTitle('Success: Memo Entry Saved')
+  // Addコマンドのメッセージを作成
+  add(pageData: { title: string; body: string | null; url: string; tagName: string }) {
+    const embed = new EmbedBuilder()
+      .setTitle('Saved New Memo')
       .setURL(pageData.url)
       .setColor(7506394)
       .addFields({ name: 'Title', value: pageData.title })
-      .addFields({ name: 'Category', value: pageData.tagName })
+      .addFields({ name: 'Tag', value: pageData.tagName })
       .setFooter({
         text: 'Notion',
-        iconURL:
-          'https://cdn.discordapp.com/attachments/896987534645669918/1134089854049861662/notion.png',
+        iconURL: 'attachment://notion-logo.png',
       })
       .setTimestamp();
-    return embedMsg;
+
+    const fotterAttachment = new AttachmentBuilder('img/notion-logo.png');
+
+    return { embeds: [embed], files: [fotterAttachment], components: [] };
   },
 
-  // メモ検索メッセージを作成
+  // Searchコマンドのメッセージを作成
   search(pageData: { title: string; tagName: string; url: string }[]) {
-    const embedMsg = new EmbedBuilder()
+    const embed = new EmbedBuilder()
       .setTitle('Memo List')
       .setColor(7506394)
       .setFooter({
         text: 'Notion',
-        iconURL:
-          'https://cdn.discordapp.com/attachments/896987534645669918/1134089854049861662/notion.png',
+        iconURL: 'attachment://notion-logo.png',
       })
       .setTimestamp();
 
-    if (pageData[0].tagName.includes('.Thinking')) {
-      embedMsg.setURL(
-        'https://www.notion.so/fdbef86856a842f9a21d2ef304a5f5f5?v=f1b1d5e3770d4883829302228e0c0eeb&pvs=4'
-      );
-    } else if (pageData[0].tagName.includes('.Work')) {
-      embedMsg.setURL(
-        'https://www.notion.so/fdbef86856a842f9a21d2ef304a5f5f5?v=ecdb97214d274897b9f40526602b4c76&pvs=4'
-      );
-    }
-
     for (let i = 0; i < pageData.length; i++) {
-      embedMsg.addFields({
+      embed.addFields({
         name: `${i + 1}. ${pageData[i].title}`,
         value: `:white_small_square:${pageData[i].tagName}\n:white_small_square:[Continue to Page](${pageData[i].url})`,
       });
     }
 
-    return embedMsg;
+    const fotterAttachment = new AttachmentBuilder('img/notion-logo.png');
+
+    return { embeds: [embed], files: [fotterAttachment], components: [] };
   },
 };
 
-export const createSaveMessage = {
-  update(title: string, url: string) {
-    // 埋め込みメッセージを作成
-    const embedMsg = new EmbedBuilder()
-      .setTitle('Success: Memo Entry Saved')
-      .setURL(url)
-      .setColor(7506394)
-      .addFields({ name: 'Title', value: title })
-      .setFooter({
-        text: 'Notion',
-        iconURL:
-          'https://cdn.discordapp.com/attachments/896987534645669918/1134089854049861662/notion.png',
-      })
-      .setTimestamp();
-    return embedMsg;
-  },
-};
-
+// Taskコマンドのメッセージを作成
 export const createTaskMessage = {
-  // タスク一覧表示コマンドのメッセージを作成
+  // Listコマンドのメッセージを作成
   list(pageData: { title: string; tagName: string; pageId: string; url: string }[]) {
     const embed = new EmbedBuilder()
       .setTitle('Task List')
@@ -122,10 +122,10 @@ export const createTaskMessage = {
     return { embeds: [embed], files: [fotterAttachment], components: [] };
   },
 
-  // タスクチェックコマンドのメッセージを作成
+  // Checkコマンドのメッセージを作成
   check(taskData: TaskData[]) {
     const embed = new EmbedBuilder()
-      .setTitle('Nice Work! Task Checked')
+      .setTitle('Task Checked')
       .setColor(7506394)
       .setFooter({
         text: 'Notion',
@@ -145,7 +145,7 @@ export const createTaskMessage = {
     return { embeds: [embed], files: [fotterAttachment], components: [] };
   },
 
-  // タスク追加コマンドのメッセージを作成
+  // Addコマンドのメッセージを作成
   add(title: string, tag: string, pageData: { url: string; date?: string }) {
     // 埋め込みメッセージを作成
     const embed = new EmbedBuilder()

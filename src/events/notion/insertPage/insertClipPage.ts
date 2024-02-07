@@ -1,20 +1,15 @@
 import { notion, masterDbId } from '../../../modules/notionModule';
 import { isFullPage } from '@notionhq/client';
 import { CreatePageResponse } from '@notionhq/client/build/src/api-endpoints';
+import { ClipData } from '../../../types/original/notion';
 
-export const insertClip = async (
-  faviconUrl: string,
-  title: string,
-  siteUrl: string,
-  // tagId: string,
-  favorite: boolean
-) => {
+export const insertClip = async (clipData: ClipData) => {
   try {
     const pageData: CreatePageResponse = await notion.pages.create({
       icon: {
         type: 'external',
         external: {
-          url: faviconUrl,
+          url: clipData.faviconUrl,
         },
       },
       parent: {
@@ -27,33 +22,26 @@ export const insertClip = async (
             {
               type: 'text',
               text: {
-                content: title,
+                content: clipData.title,
               },
             },
           ],
         },
         URL: {
-          url: siteUrl,
+          url: clipData.siteUrl,
         },
-        // Tag: {
-        //   relation: [
-        //     {
-        //       id: tagId,
-        //     },
-        //   ],
-        // },
+        Tag: {
+          relation: clipData.tagId,
+        },
         Favorite: {
-          checkbox: favorite,
+          checkbox: clipData.favorite,
         },
       },
     });
 
-    const insertPageData: { url: string } = { url: '' };
-    if (isFullPage(pageData)) {
-      insertPageData.url = pageData.url;
-    }
+    if (isFullPage(pageData)) clipData.notionUrl = pageData.url;
 
-    return insertPageData;
+    return clipData;
   } catch (error) {
     console.error('Notion DB Error : ', error);
   }

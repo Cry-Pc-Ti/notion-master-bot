@@ -13,7 +13,7 @@ export const fetchRelationName = async (pageId: string) => {
       if (!('Name' in pageData.properties)) return title;
       if (!('title' in pageData.properties.Name)) return title;
 
-      title = pageData.properties.Name.title[0].plain_text;
+      return pageData.properties.Name.title[0].plain_text;
     }
 
     // ページタイトルを返却

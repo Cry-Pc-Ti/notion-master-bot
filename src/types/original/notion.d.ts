@@ -29,6 +29,25 @@ export interface NotionLibraryData {
   Tag: TagData[];
 }
 
+export interface ClipData {
+  faviconUrl: string;
+  notionUrl: string;
+  title: string;
+  siteUrl: string;
+  tagId: { id: string }[];
+  favorite: boolean;
+}
+
+export interface DiaryData {
+  relativDate: string;
+  happiness: string;
+  lookback: string;
+  date: string;
+  tagId: string;
+  pageId: string;
+  notionPageUrl: string;
+}
+
 export interface TaskData {
   title: string;
   tagName: string;

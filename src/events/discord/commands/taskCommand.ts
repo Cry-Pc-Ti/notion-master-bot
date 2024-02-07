@@ -165,7 +165,7 @@ export const taskCommand = {
         // コマンドに入力された値を取得
         const relativDate: string | null = options.getString('period');
 
-        // 必須入力項目がnullの場合、処理を終了
+        // 必須入力項目が取得できない場合、処理を終了
         if (!relativDate) {
           await interaction.editReply('処理が失敗しました');
           return;
@@ -249,11 +249,11 @@ export const taskCommand = {
       } else if (subCommand === 'add') {
         // コマンドに入力された値を取得
         const title: string | null = options.getString('task');
-        const subFolderPageId: string | null = options.getString('folder');
+        const masterFolderPageId: string | null = options.getString('folder');
         const deadline: number | null = options.getInteger('deadline');
 
         // 必須入力項目がnullの場合、処理を終了
-        if (!title || !subFolderPageId) {
+        if (!title || !masterFolderPageId) {
           await interaction.editReply('処理が失敗しました');
           return;
         }
@@ -269,10 +269,10 @@ export const taskCommand = {
           return;
         }
 
-        // 取得したサブフォルダに含まれているタグを取得
+        // 取得したマスタフォルダに含まれているタグを取得
         const matchingTags = jsonData.Tag.filter(
           (tag) =>
-            tag.MasterFolder.PageId === subFolderPageId &&
+            tag.MasterFolder.PageId === masterFolderPageId &&
             tag.MasterFolder.SubFolder.PageId === taskFolderPageId
         );
 
@@ -301,41 +301,40 @@ export const taskCommand = {
           const selectedTagId = selectMenuInteraction.values[0];
 
           // Notionに新規ページを追加
-          const insertPageData = await insertTask(selectedTagId, title, deadline);
+          const taskData = await insertTask(selectedTagId, title, deadline);
 
           // 選択されたタグの名前を取得
           const tagName = await fetchRelationName(selectedTagId);
 
           // 埋め込みメッセージを作成・送信
-          const embed = createTaskMessage.add(title, tagName, insertPageData);
+          const embed = createTaskMessage.add(title, tagName, taskData);
           await interaction.editReply(embed);
         });
       }
-    } catch (error: unknown) {
+    } catch (error) {
       await interaction.editReply('処理が失敗しました');
       console.error(error);
     }
   },
 
-  //   // タスクの定期送信
-  //   async schedule(channel: Channel) {
-  //     try {
-  //       // 今日のタスクを取得
-  //       const taskData = await queryTask('today');
+  // タスクの定期送信
+  async sendTaskList(channel: Channel) {
+    try {
+      // 今日のタスクを取得
+      const taskData = await queryTask('today');
 
-  //       if (channel.type === ChannelType.GuildText) {
-  //         if (!taskData.length) {
-  //           channel.send('Task Completed!');
-  //         } else {
-  //           const embedMsg = createTaskMessage.list(taskData);
-  //           channel.send({ embeds: [embedMsg] });
-  //         }
-  //       }
-  //     } catch (error: unknown) {
-  //       if (channel.type === ChannelType.GuildText) {
-  //         channel.send('処理が失敗しました');
-  //       }
-  //       console.error(error);
-  //     }
-  //   },
+      if (channel.type === ChannelType.GuildText) {
+        if (!taskData.length) {
+          channel.send('Task Completed!');
+        } else {
+          const embed = createTaskMessage.list(taskData);
+          channel.send(embed);
+        }
+      }
+    } catch (error) {
+      if (channel.type === ChannelType.GuildText) channel.send('処理が失敗しました');
+
+      console.error(error);
+    }
+  },
 };

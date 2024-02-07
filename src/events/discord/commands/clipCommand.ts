@@ -1,28 +1,18 @@
-import * as fs from 'fs';
-import { fetchTitleAndFavicon } from '../../notion/fetchTitleAndFavicon';
-import { insertClip } from '../../notion/insertPage/insertClipPage';
-import { createSaveMessage } from '../embeds/createEmbeds';
-import { NotionLibraryData } from '../../../types/original/notion';
 import {
   SlashCommandBuilder,
   AutocompleteInteraction,
   ChatInputCommandInteraction,
-  Channel,
-  ChannelType,
   ApplicationCommandOptionChoiceData,
   ActionRowBuilder,
-  ActionRowData,
   ComponentType,
-  Interaction,
-  InteractionCollector,
-  InteractionResponse,
-  Options,
-  SelectMenuBuilder,
   StringSelectMenuBuilder,
   StringSelectMenuInteraction,
-  StringSelectMenuOptionBuilder,
-  TextInputBuilder,
 } from 'discord.js';
+import { fetchTitleAndFavicon } from '../../fetchTitleAndFavicon';
+import { insertClip } from '../../notion/insertPage/insertClipPage';
+import { createClipMessage } from '../embeds/createEmbeds';
+import { ClipData } from '../../../types/original/notion';
+import { jsonData } from '../../notion/readJson';
 
 export const clipCommand = {
   // コマンドを定義
@@ -36,127 +26,138 @@ export const clipCommand = {
     .addBooleanOption((option) => option.setName('favorite').setDescription('Set Favorite'))
     .toJSON(),
 
-  // SubFolderの選択肢を表示する処理
-  async selectMasterFolder(interaction: AutocompleteInteraction) {
-    // JSONファイルの読み込み
-    const fileData = fs.readFileSync('notion-data.json', 'utf-8');
+  // AutoCompleteの登録
+  async autocomplete(interaction: AutocompleteInteraction) {
+    // optionの情報を取得
+    const forcusedOption = interaction.options.getFocused(true);
 
-    // JSONデータをオブジェクトに変換
-    const jsonData: NotionLibraryData = JSON.parse(fileData);
-    const masterFolderChoice: { label: string; value: string }[] = [];
+    // optionがtagの場合
+    if (forcusedOption.name === 'folder') {
+      // Autocompleteの情報を取得
+      const autocompleteChoice: ApplicationCommandOptionChoiceData[] = [];
 
-    for (const folder of jsonData.Folder) {
-      const masterFolderName = folder.MasterFolder.FolderName;
-      const masterFolderPageId = folder.MasterFolder.PageId;
+      // 重複を確認するためのセット
+      const addedFolder: Set<string> = new Set();
 
-      masterFolderChoice.push({ label: masterFolderName, value: masterFolderPageId });
+      // マスタフォルダページIDがInputのサブフォルダを取得
+      const subFolderPageIds: string[] | undefined = jsonData.Folder.MasterFolder.find(
+        (folder) => folder.FolderName === 'Input'
+      )?.SubFolderPageId;
+
+      // 取得したサブフォルダのページIDからサブフォルダの名前とぺージIDを取得
+      if (subFolderPageIds) {
+        for (const subFolderPageId of subFolderPageIds) {
+          const subFolder = jsonData.Folder.SubFolder.find(
+            (folder) => folder.PageId === subFolderPageId
+          );
+          if (subFolder && !addedFolder.has(subFolder.FolderName)) {
+            autocompleteChoice.push({
+              name: subFolder.FolderName,
+              value: subFolder.PageId,
+            });
+            addedFolder.add(subFolder.FolderName);
+          }
+        }
+      }
+
+      // Autocompleteを登録
+      await interaction.respond(autocompleteChoice);
     }
-
-    const select: StringSelectMenuBuilder = new StringSelectMenuBuilder()
-      .setCustomId('masterFolder')
-      .setPlaceholder('Select Master Folder')
-      .setMinValues(1)
-      .setMaxValues(1)
-      .addOptions(
-        masterFolderChoice.map((masterFolderChoice) =>
-          new StringSelectMenuOptionBuilder()
-            .setLabel(masterFolderChoice.label)
-            .setValue(masterFolderChoice.value)
-        )
-      );
-
-    const row: ActionRowBuilder<StringSelectMenuBuilder> =
-      new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(select);
-
-    const selectResponse: InteractionResponse = await interaction.reply({ components: [row] });
-
-    const collector: InteractionCollector<StringSelectMenuInteraction> =
-      selectResponse.createMessageComponentCollector({
-        componentType: ComponentType.StringSelect,
-      })!;
-
-    collector.on('collect', async (selectMenuInteraction: StringSelectMenuInteraction) => {
-      const selectedMasterFolderId = selectMenuInteraction.values[0];
-      const selectedMasterFolderName = masterFolderChoice.find(
-        (masterFolderChoice) => masterFolderChoice.value === selectedMasterFolderId
-      )?.label;
-
-      await selectMenuInteraction.update({
-        content: `Selected Master Folder: ${selectedMasterFolderName}`,
-      });
-    });
-
-    // selectedMasterFolderIdを返す
   },
 
-  // Sub Folderを選択する処理
-  async selectSubFolder(interaction: ChatInputCommandInteraction, masterFolderId: string) {
-    // JSONファイルの読み込み
-    const fileData = fs.readFileSync('notion-data.json', 'utf-8');
+  async execute(interaction: ChatInputCommandInteraction) {
+    await interaction.deferReply();
 
-    // JSONデータをオブジェクトに変換
-    const jsonData: NotionLibraryData = JSON.parse(fileData);
+    // optionの情報を取得
+    const subFolderPageId = interaction.options.getString('folder');
+    const url = interaction.options.getString('url');
+    let favorite = interaction.options.getBoolean('favorite');
 
-    const subFolderChoice: { label: string; value: string }[] = [];
-
-    // Master Folderに紐づくSub Folderを取得
-    const subFolders = jsonData.Folder.find(
-      (folder) => folder.MasterFolder.PageId === masterFolderId
-    )?.MasterFolder.SubFolder;
-
-    if (!subFolders) {
+    // 必須項目が取得できない場合、処理を終了
+    if (!subFolderPageId || !url) {
+      await interaction.editReply('処理が失敗しました');
       return;
     }
 
-    for (const subFolder of subFolders) {
-      const subFolderName = subFolder.FolderName;
-      const subFolderPageId = subFolder.PageId;
+    if (!favorite) favorite = false;
 
-      subFolderChoice.push({ label: subFolderName, value: subFolderPageId });
-    }
-  },
+    const clipData: ClipData = {
+      faviconUrl: '',
+      notionUrl: '',
+      title: '',
+      siteUrl: url,
+      tagId: [],
+      favorite: favorite,
+    };
 
-  // コマンド実行時の処理
-  async execute(interaction: ChatInputCommandInteraction) {
-    await interaction.deferReply();
-    try {
-      const { options } = interaction;
+    // InputフォルダのページIDを取得
+    const inputFolderPageId: string | undefined = jsonData.Folder.MasterFolder.find(
+      (folder) => folder.FolderName === 'Input'
+    )?.PageId;
 
-      // コマンドに入力された値を取得
-      const siteUrl: string | null = options.getString('url');
-      const favorite: boolean | null = options.getBoolean('favorite');
-      console.log(siteUrl, favorite);
-
-      if (!siteUrl || favorite === null) {
-        await interaction.editReply('処理が失敗しました');
-        return;
-      }
-
-      // URLをもとにサイトのタイトルとファビコンを取得
-      const siteData = await fetchTitleAndFavicon(siteUrl);
-      console.log(siteData);
-
-      // タイトルとファビコンのどちらかが取得できない場合、処理を終了
-      if (!siteData.title || !siteData.faviconUrl) {
-        await interaction.editReply('処理が失敗しました');
-        return;
-      }
-
-      const title = siteData.title;
-      const faviconUrl = siteData.faviconUrl;
-
-      // 該当のページを更新
-      await insertClip(faviconUrl, title, siteUrl, favorite);
-
-      // 埋め込みメッセージを作成
-      // const embedMsg = createSaveMessage.clip();
-
-      // メッセージを送信
-      // await interaction.editReply({ embeds: [embedMsg] });
-      await interaction.editReply('OK');
-    } catch (error: unknown) {
+    // タスクフォルダのページIDが取得できない場合、処理を終了
+    if (!inputFolderPageId) {
       await interaction.editReply('処理が失敗しました');
-      console.error(error);
+      return;
     }
+
+    // 取得したサブフォルダに含まれているタグを取得
+    const matchingTags = jsonData.Tag.filter(
+      (tag) =>
+        tag.MasterFolder.PageId === inputFolderPageId &&
+        tag.MasterFolder.SubFolder.PageId === subFolderPageId
+    );
+
+    // タグが取得できない場合、処理を終了
+    if (!matchingTags.length) {
+      await interaction.editReply('処理が失敗しました');
+      return;
+    }
+
+    // タグの数を取得
+    const tagCount = matchingTags.length;
+
+    // セレクトメニューを作成
+    const tagSelectMenu: StringSelectMenuBuilder = new StringSelectMenuBuilder()
+      .setCustomId('tag')
+      .setPlaceholder('Select Tag')
+      .setMinValues(1)
+      .setMaxValues(tagCount)
+      .addOptions(matchingTags.map((tag) => ({ label: tag.TagName, value: tag.PageId })));
+
+    // セレクトメニューを送信
+    const row: ActionRowBuilder<StringSelectMenuBuilder> =
+      new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(tagSelectMenu);
+
+    const selectResponse = await interaction.editReply({ components: [row] });
+
+    // セレクトメニューで選択された値を取得
+    const collector = selectResponse.createMessageComponentCollector({
+      componentType: ComponentType.StringSelect,
+      filter: (selectMenuInteraction) => selectMenuInteraction.user.id === interaction.user.id,
+    });
+
+    collector.on('collect', async (selectMenuInteraction: StringSelectMenuInteraction) => {
+      // セレクトメニューで選択されたタグのページIDを取得
+      clipData.tagId = selectMenuInteraction.values.map((value) => ({
+        id: value,
+      }));
+
+      // URLからタイトルとfaviconの取得
+      await fetchTitleAndFavicon(clipData);
+
+      // タイトルとfaviconが取得できない場合、処理を終了
+      if (!clipData.title || !clipData.faviconUrl) {
+        await interaction.editReply('処理が失敗しました');
+        return;
+      }
+
+      // タイトルとfaviconの取得できた場合、Notionにページを挿入
+      await insertClip(clipData);
+
+      // 埋め込みメッセージを作成・送信
+      const embed = createClipMessage.insert(clipData);
+      await interaction.editReply(embed);
+    });
   },
 };
