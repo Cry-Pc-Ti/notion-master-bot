@@ -1,5 +1,6 @@
 import { notion } from '../../../modules/notionModule';
 
+// タスクの完了フラグを更新する
 export const updateTask = async (pageId: string) => {
   try {
     await notion.pages.update({
@@ -8,12 +9,14 @@ export const updateTask = async (pageId: string) => {
         Check: {
           checkbox: true,
         },
+        Date: {
+          date: {
+            start: new Date().toISOString().split('T')[0],
+          },
+        },
       },
     });
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error('Error: ', error.message);
-      throw error;
-    }
+  } catch (error) {
+    console.error('UpdateTaskでエラーが発生しました : ', error);
   }
 };

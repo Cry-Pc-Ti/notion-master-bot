@@ -2,9 +2,9 @@ import { notion, masterDbId } from '../../../modules/notionModule';
 import { isFullPage } from '@notionhq/client';
 import { GetPageResponse } from '@notionhq/client/build/src/api-endpoints';
 import { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
-import { fetchRelationName } from '../fetchRelationName';
+import { fetchRelationName } from './fetchRelationName';
 
-export const queryMemoPage = async (folderId: string, query: string | null) => {
+export const queryMemoPage = async (tagId: string, query: string | null) => {
   try {
     let queryMemoData: QueryDatabaseResponse;
 
@@ -14,31 +14,14 @@ export const queryMemoPage = async (folderId: string, query: string | null) => {
         database_id: masterDbId,
         filter: {
           and: [
-            {
-              property: 'MasterFolder',
-              rollup: {
-                any: {
-                  relation: {
-                    contains: folderId,
-                  },
-                },
-              },
-            },
-            {
-              property: 'SubFolder',
-              rollup: {
-                any: { relation: { contains: '4796ee2f-0a0a-44df-b4b8-430745630a8a' } },
-              },
-            },
+            { property: 'Tag', relation: { contains: tagId } },
             { property: 'Archive', checkbox: { equals: false } },
             { property: 'Title', title: { contains: query } },
           ],
         },
         sorts: [
-          {
-            property: 'Tag',
-            direction: 'ascending',
-          },
+          { property: 'Tag', direction: 'ascending' },
+          { property: 'Title', direction: 'ascending' },
         ],
       });
 
@@ -48,22 +31,7 @@ export const queryMemoPage = async (folderId: string, query: string | null) => {
         database_id: masterDbId,
         filter: {
           and: [
-            {
-              property: 'MasterFolder',
-              rollup: {
-                any: {
-                  relation: {
-                    contains: folderId,
-                  },
-                },
-              },
-            },
-            {
-              property: 'SubFolder',
-              rollup: {
-                any: { relation: { contains: '4796ee2f-0a0a-44df-b4b8-430745630a8a' } },
-              },
-            },
+            { property: 'Tag', relation: { contains: tagId } },
             { property: 'Archive', checkbox: { equals: false } },
           ],
         },
@@ -78,8 +46,10 @@ export const queryMemoPage = async (folderId: string, query: string | null) => {
 
     const memoData: { title: string; tagName: string; url: string }[] = [];
 
+    // 検索結果がない場合、処理終了
     if (!queryMemoData.results.length) return memoData;
 
+    // 検索結果からページ情報を取得
     for (const data of queryMemoData.results) {
       // ページIDからページ情報を取得
       const pageData: GetPageResponse = await notion.pages.retrieve({ page_id: data.id });
@@ -92,18 +62,14 @@ export const queryMemoPage = async (folderId: string, query: string | null) => {
         if (!('title' in pageData.properties.Title)) continue;
         const title: string = pageData.properties.Title.title[0].plain_text;
 
-        if (!('relation' in pageData.properties.Tag)) continue;
-        const tagName: string = await fetchRelationName(pageData.properties.Tag.relation[0].id);
+        const tagName: string = await fetchRelationName(tagId);
 
         memoData.push({ title: title, tagName: tagName, url: url });
       }
     }
 
     return memoData;
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error('Error: ', error.message);
-      throw error;
-    }
+  } catch (error) {
+    console.error('Notion DB Error : ', error);
   }
 };

@@ -1,7 +1,10 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, Channel } from 'discord.js';
 import { queryDiaryPage } from '../../notion/queryPage/queryDiaryPage';
 import { updateDiary } from '../../notion/updatePage/updateDiaryPage';
 import { createDiaryMessage } from '../embeds/createEmbeds';
+import { DiaryData } from '../../../types/original/notion';
+import { insertDiary } from '../../notion/insertPage/insertDiaryPage';
+import { log } from 'console';
 
 export const diaryCommand = {
   data: new SlashCommandBuilder()
@@ -58,11 +61,11 @@ export const diaryCommand = {
     .addStringOption((option) =>
       option.setName('lookback').setDescription('Write Lookback').setRequired(true)
     ),
+
   async execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
     try {
       const { options } = interaction;
-      const diaryTagId = '776bc325-3a04-467e-ae4c-9f4dcc186b3d';
 
       // コマンドに入力された値を取得
       const relativDate: string | null = options.getString('date');
@@ -71,31 +74,58 @@ export const diaryCommand = {
 
       if (!relativDate || !happiness || !lookback) return;
 
+      // DiaryタグのページIDを取得
+      const diaryTagId: string = '776bc3253a04467eae4c9f4dcc186b3d';
+
+      const diaryData: DiaryData = {
+        relativDate: relativDate,
+        happiness: happiness,
+        lookback: lookback,
+        date: '',
+        tagId: diaryTagId,
+        pageId: '',
+        notionPageUrl: '',
+      };
+
       // 相対日付をもとにPageID, URLを取得
-      const pageData = await queryDiaryPage(relativDate, diaryTagId);
+      await queryDiaryPage(diaryData);
 
       // Notionに該当のページが無い場合、処理終了
-      if (!pageData) {
+      if (!diaryData.pageId || !diaryData.notionPageUrl) {
         await interaction.editReply('処理が失敗しました');
         return;
       }
 
-      // 該当ページから情報取得
-      const date: string = pageData.date;
-      const pageId: string = pageData.pageId;
-      const url: string = pageData.url;
-
       // 該当のページを更新
-      await updateDiary(pageId, diaryTagId, happiness, lookback);
+      await updateDiary(diaryData);
 
       // 埋め込みメッセージを作成
-      const embeds = createDiaryMessage.update(date, url);
+      const embeds = createDiaryMessage.update(diaryData.date, diaryData.notionPageUrl);
 
       // メッセージを送信
       await interaction.editReply(embeds);
-    } catch (error: unknown) {
+    } catch (error) {
       await interaction.editReply('処理が失敗しました');
-      console.error(error);
+      console.error(`Command Error: ${error}`);
     }
+  },
+
+  // １週間分の日記ページを作成
+  async createDiaryPage() {
+    const diaryTagId: string = '776bc325-3a04-467e-ae4c-9f4dcc186b3d';
+
+    // 1週間分の日記ページを作成
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(new Date().setDate(new Date().getDate() - i))
+        .toISOString()
+        .split('T')[0];
+
+      // 曜日を取得
+      const dayOfWeek = new Date(date).toDateString().split(' ')[0];
+
+      // 日記ページを作成
+      await insertDiary(date, dayOfWeek, diaryTagId);
+    }
+    console.log('Diary Page Created');
   },
 };

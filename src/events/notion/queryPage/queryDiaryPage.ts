@@ -1,23 +1,26 @@
 import { notion, masterDbId } from '../../../modules/notionModule';
 import { isFullPage } from '@notionhq/client';
 import { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
+import { DiaryData } from '../../../types/original/notion';
 
-export const queryDiaryPage = async (relativDate: string, diaryTagId: string) => {
+export const queryDiaryPage = async (diaryData: DiaryData) => {
   try {
     const d: Date = new Date();
     d.setTime(d.getTime() + 1000 * 60 * 60 * 9);
 
     // 相対日付から日付に変換
     let date: string = '';
-    if (relativDate === 'today') {
+    if (diaryData.relativDate === 'today') {
       date = d.toISOString().split('T')[0];
-    } else if (relativDate === 'yesterday') {
+    } else if (diaryData.relativDate === 'yesterday') {
       d.setDate(d.getDate() - 1);
       date = d.toISOString().split('T')[0];
-    } else if (relativDate === 'dby') {
+    } else if (diaryData.relativDate === 'dby') {
       d.setDate(d.getDate() - 2);
       date = d.toISOString().split('T')[0];
     }
+
+    diaryData.date = date;
 
     // 指定日付のページIDを取得
     const queryPageData: QueryDatabaseResponse = await notion.databases.query({
@@ -33,35 +36,24 @@ export const queryDiaryPage = async (relativDate: string, diaryTagId: string) =>
           {
             property: 'Tag',
             relation: {
-              contains: diaryTagId,
+              contains: diaryData.tagId,
             },
           },
         ],
       },
     });
 
-    if (queryPageData) {
-      if (queryPageData !== null && queryPageData.results.length > 0) {
-        // PageIDを取得
-        const pageId = queryPageData.results[0].id;
+    if (queryPageData !== null && queryPageData.results.length > 0) {
+      // PageIDを取得
+      const pageId = queryPageData.results[0].id;
+      diaryData.pageId = pageId;
 
-        // URLを取得
-        const retrievePageData = await notion.pages.retrieve({ page_id: pageId });
+      // URLを取得
+      const retrievePageData = await notion.pages.retrieve({ page_id: pageId });
 
-        let url: string = '';
-        if (isFullPage(retrievePageData)) {
-          url = retrievePageData.url;
-        }
-
-        return { date, pageId, url };
-      }
-      console.log('該当するデータがありませんでした');
-      return undefined;
+      if (isFullPage(retrievePageData)) diaryData.notionPageUrl = retrievePageData.url;
     }
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error('Error: ', error.message);
-      throw error;
-    }
+  } catch (error) {
+    console.error('Notion DB Error : ', error);
   }
 };

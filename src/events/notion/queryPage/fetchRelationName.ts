@@ -1,4 +1,4 @@
-import { notion } from '../../modules/notionModule';
+import { notion } from '../../../modules/notionModule';
 import { isFullPage } from '@notionhq/client';
 
 export const fetchRelationName = async (pageId: string) => {
@@ -13,13 +13,13 @@ export const fetchRelationName = async (pageId: string) => {
       if (!('Name' in pageData.properties)) return title;
       if (!('title' in pageData.properties.Name)) return title;
 
-      title = pageData.properties.Name.title[0].plain_text;
+      return pageData.properties.Name.title[0].plain_text;
     }
 
     // ページタイトルを返却
     return title;
-  } catch (error: unknown) {
-    if (error instanceof Error) console.error('Error: ', error.message);
+  } catch (error) {
+    console.error('Notion DB Error : ', error);
     return title;
   }
 };

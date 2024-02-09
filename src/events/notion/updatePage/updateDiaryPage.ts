@@ -1,22 +1,18 @@
 import { notion } from '../../../modules/notionModule';
+import { DiaryData } from '../../../types/original/notion';
 
-export const updateDiary = async (
-  pageId: string,
-  diaryTagId: string,
-  happiness: string,
-  lookback: string
-) => {
+export const updateDiary = async (diaryData: DiaryData) => {
   try {
     await notion.pages.update({
-      page_id: pageId,
+      page_id: diaryData.pageId,
       properties: {
         Tag: {
           relation: [
             {
-              id: diaryTagId,
+              id: diaryData.tagId,
             },
             {
-              id: happiness,
+              id: diaryData.happiness,
             },
           ],
         },
@@ -24,17 +20,14 @@ export const updateDiary = async (
           rich_text: [
             {
               text: {
-                content: lookback,
+                content: diaryData.lookback,
               },
             },
           ],
         },
       },
     });
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error('Error: ', error.message);
-      throw error;
-    }
+  } catch (error) {
+    console.error('Notion DB Error : ', error);
   }
 };
