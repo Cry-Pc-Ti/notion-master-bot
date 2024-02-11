@@ -108,7 +108,7 @@ cron.schedule('0 0 0 * * 0', async () => {
     await diaryCommand.createDiaryPage();
 
     if (channel && channel.type === ChannelType.GuildText)
-      await channel.send('今週の日記ページが作成されました');
+      await channel.send("This Week's Diary Page Created.");
   } catch (error) {
     console.error(`日記ページの作成中にエラーが発生しました: ${error}`);
   }

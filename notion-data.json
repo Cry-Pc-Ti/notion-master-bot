@@ -315,18 +315,6 @@
       }
     },
     {
-      "TagName": ".Input.Language.intra-mart",
-      "PageId": "2e48c785-24e6-4c11-b9b1-164db4483aeb",
-      "MasterFolder": {
-        "FolderName": "Input",
-        "PageId": "b3a069ee-4d37-4d09-abbf-8c1e9f017b94",
-        "SubFolder": {
-          "FolderName": "Language",
-          "PageId": "24595a33-9c6d-439f-adbb-df066479d021"
-        }
-      }
-    },
-    {
       "TagName": ".Input.Language.Java",
       "PageId": "a895ce4f-e07b-4cf5-ba1b-6b084597d1bf",
       "MasterFolder": {
@@ -353,18 +341,6 @@
     {
       "TagName": ".Input.Language.jQuery",
       "PageId": "ae3e1495-178e-4575-883f-2b32a951aab9",
-      "MasterFolder": {
-        "FolderName": "Input",
-        "PageId": "b3a069ee-4d37-4d09-abbf-8c1e9f017b94",
-        "SubFolder": {
-          "FolderName": "Language",
-          "PageId": "24595a33-9c6d-439f-adbb-df066479d021"
-        }
-      }
-    },
-    {
-      "TagName": ".Input.Language.kintone",
-      "PageId": "2789ebf1-a536-4178-b8d9-84702ff32288",
       "MasterFolder": {
         "FolderName": "Input",
         "PageId": "b3a069ee-4d37-4d09-abbf-8c1e9f017b94",
@@ -437,18 +413,6 @@
     {
       "TagName": ".Input.Language.SQL",
       "PageId": "2836def8-068a-4d8f-88f7-06d0dc144279",
-      "MasterFolder": {
-        "FolderName": "Input",
-        "PageId": "b3a069ee-4d37-4d09-abbf-8c1e9f017b94",
-        "SubFolder": {
-          "FolderName": "Language",
-          "PageId": "24595a33-9c6d-439f-adbb-df066479d021"
-        }
-      }
-    },
-    {
-      "TagName": ".Input.Language.TwitterAPI",
-      "PageId": "43e1b7dc-78cb-425d-90c0-e0a3beb93194",
       "MasterFolder": {
         "FolderName": "Input",
         "PageId": "b3a069ee-4d37-4d09-abbf-8c1e9f017b94",

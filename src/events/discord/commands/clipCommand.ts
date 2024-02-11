@@ -83,7 +83,7 @@ export const clipCommand = {
 
     const clipData: ClipData = {
       faviconUrl: '',
-      notionUrl: '',
+      notionPageUrl: '',
       title: '',
       siteUrl: url,
       tagId: [],

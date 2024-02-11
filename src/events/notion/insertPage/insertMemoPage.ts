@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { notion, masterDbId } from '../../../modules/notionModule';
+=======
+import { notion, masterDbId, documentPageIconUrl } from '../../../modules/notionModule';
+>>>>>>> feature
 import { isFullPage } from '@notionhq/client';
 import { CreatePageResponse } from '@notionhq/client/build/src/api-endpoints';
 
@@ -17,7 +21,11 @@ export const insertMemo = async (tagId: string, title: string, body: string | nu
         icon: {
           type: 'external',
           external: {
+<<<<<<< HEAD
             url: 'https://www.notion.so/icons/document_gray.svg?mode=dark',
+=======
+            url: documentPageIconUrl,
+>>>>>>> feature
           },
         },
         parent: {
@@ -60,7 +68,11 @@ export const insertMemo = async (tagId: string, title: string, body: string | nu
         icon: {
           type: 'external',
           external: {
+<<<<<<< HEAD
             url: 'https://www.notion.so/icons/document_gray.svg?mode=dark',
+=======
+            url: documentPageIconUrl,
+>>>>>>> feature
           },
         },
         parent: {

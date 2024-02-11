@@ -1,10 +1,9 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, Channel } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
 import { queryDiaryPage } from '../../notion/queryPage/queryDiaryPage';
 import { updateDiary } from '../../notion/updatePage/updateDiaryPage';
 import { createDiaryMessage } from '../embeds/createEmbeds';
 import { DiaryData } from '../../../types/original/notion';
 import { insertDiary } from '../../notion/insertPage/insertDiaryPage';
-import { log } from 'console';
 
 export const diaryCommand = {
   data: new SlashCommandBuilder()
@@ -110,18 +109,20 @@ export const diaryCommand = {
     }
   },
 
-  // １週間分の日記ページを作成
+  // １週間分の日記ページを作成(毎週日曜日に実行)
   async createDiaryPage() {
     const diaryTagId: string = '776bc325-3a04-467e-ae4c-9f4dcc186b3d';
 
-    // 1週間分の日記ページを作成
+    // 月曜から日曜までの1週間分の日記ページを作成
     for (let i = 0; i < 7; i++) {
-      const date = new Date(new Date().setDate(new Date().getDate() - i))
+      const date = new Date(new Date().setDate(new Date().getDate() + i + 1))
         .toISOString()
         .split('T')[0];
 
       // 曜日を取得
       const dayOfWeek = new Date(date).toDateString().split(' ')[0];
+
+      console.log(date, dayOfWeek);
 
       // 日記ページを作成
       await insertDiary(date, dayOfWeek, diaryTagId);

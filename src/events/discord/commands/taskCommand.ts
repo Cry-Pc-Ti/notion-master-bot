@@ -323,7 +323,12 @@ export const taskCommand = {
       const taskData = await queryTask('today');
 
       if (channel.type === ChannelType.GuildText) {
-        if (!taskData.length) {
+        if (
+          taskData[0].title === '' &&
+          taskData[0].tagName === '' &&
+          taskData[0].pageId === '' &&
+          taskData[0].url === ''
+        ) {
           channel.send('Task Completed!');
         } else {
           const embed = createTaskMessage.list(taskData);
