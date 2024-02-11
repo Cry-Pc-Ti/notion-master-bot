@@ -1,4 +1,4 @@
-import { notion, masterDbId, notionPageIconUrl } from '../../../modules/notionModule';
+import { notion, masterDbId, documentPageIconUrl } from '../../../modules/notionModule';
 import { isFullPage } from '@notionhq/client';
 import { CreatePageResponse } from '@notionhq/client/build/src/api-endpoints';
 
@@ -17,7 +17,7 @@ export const insertMemo = async (tagId: string, title: string, body: string | nu
         icon: {
           type: 'external',
           external: {
-            url: notionPageIconUrl,
+            url: documentPageIconUrl,
           },
         },
         parent: {
@@ -60,7 +60,7 @@ export const insertMemo = async (tagId: string, title: string, body: string | nu
         icon: {
           type: 'external',
           external: {
-            url: notionPageIconUrl,
+            url: documentPageIconUrl,
           },
         },
         parent: {

@@ -31,7 +31,7 @@ export interface NotionLibraryData {
 
 export interface ClipData {
   faviconUrl: string;
-  notionUrl: string;
+  notionPageUrl: string;
   title: string;
   siteUrl: string;
   tagId: { id: string }[];

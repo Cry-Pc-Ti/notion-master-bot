@@ -1,4 +1,4 @@
-import { notion, masterDbId } from '../../../modules/notionModule';
+import { notion, masterDbId, taskPageIconUrl } from '../../../modules/notionModule';
 import { isFullPage } from '@notionhq/client';
 import { CreatePageResponse } from '@notionhq/client/build/src/api-endpoints';
 
@@ -13,7 +13,7 @@ export const insertTask = async (tagId: string, title: string, deadline: number 
         icon: {
           type: 'external',
           external: {
-            url: 'https://www.notion.so/icons/checkmark_gray.svg',
+            url: taskPageIconUrl,
           },
         },
         parent: {
@@ -41,9 +41,7 @@ export const insertTask = async (tagId: string, title: string, deadline: number 
         },
       });
 
-      if (isFullPage(task)) {
-        url = task.url;
-      }
+      if (isFullPage(task)) url = task.url;
 
       return { url, date };
 
@@ -59,7 +57,7 @@ export const insertTask = async (tagId: string, title: string, deadline: number 
         icon: {
           type: 'external',
           external: {
-            url: 'https://www.notion.so/icons/checkmark_gray.svg?mode=dark',
+            url: taskPageIconUrl,
           },
         },
         parent: {
@@ -92,9 +90,7 @@ export const insertTask = async (tagId: string, title: string, deadline: number 
         },
       });
 
-      if (isFullPage(task)) {
-        url = task.url;
-      }
+      if (isFullPage(task)) url = task.url;
 
       return { url, date };
     }

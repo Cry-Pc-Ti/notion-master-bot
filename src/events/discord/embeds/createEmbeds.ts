@@ -8,7 +8,7 @@ export const createClipMessage = {
     // 埋め込みメッセージを作成
     const embed = new EmbedBuilder()
       .setTitle('Clip Saved')
-      .setURL(clipData.notionUrl)
+      .setURL(clipData.notionPageUrl)
       .setColor(7506394)
       .setThumbnail(clipData.faviconUrl)
       .addFields({ name: 'Title', value: clipData.title })
@@ -26,7 +26,7 @@ export const createClipMessage = {
 
 // Diaryコマンドのメッセージを作成
 export const createDiaryMessage = {
-  update(date: string, url: string) {
+  update(date: string, notionPageUrl: string) {
     // 曜日を取得
     const days: string[] = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     const dayOfWeek: string = days[new Date(date).getDay()];
@@ -34,7 +34,7 @@ export const createDiaryMessage = {
     // 埋め込みメッセージを作成
     const embed = new EmbedBuilder()
       .setTitle('Saved Diary')
-      .setURL(url)
+      .setURL(notionPageUrl)
       .addFields({ name: 'Saved Diary', value: `${date} ${dayOfWeek}` })
       .setColor(7506394)
       .setFooter({
@@ -100,9 +100,6 @@ export const createTaskMessage = {
   list(pageData: { title: string; tagName: string; pageId: string; url: string }[]) {
     const embed = new EmbedBuilder()
       .setTitle('Task List')
-      .setURL(
-        'https://www.notion.so/53b960ffc0134a33901e052276059d3c?v=899332e84d3846438c19a5912ef0aa18&pvs=4'
-      )
       .setColor(7506394)
       .setFooter({
         text: 'Notion',

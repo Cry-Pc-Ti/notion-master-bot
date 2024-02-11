@@ -11,4 +11,19 @@ const masterDbId: string = process.env.MASTER_DB_ID!;
 const folderDbId: string = process.env.FOLDER_DB_ID!;
 const tagDbId: string = process.env.TAG_DB_ID!;
 
-export { notion, masterDbId, folderDbId, tagDbId, NotionLibraryData, FolderData, TagData };
+const taskPageIconUrl: string = 'https://www.notion.so/icons/checkmark_gray.svg';
+const documentPageIconUrl: string = 'https://www.notion.so/icons/document_gray.svg';
+const diaryPageIconUrl: string = 'https://www.notion.so/icons/drafts_gray.svg';
+
+export {
+  notion,
+  masterDbId,
+  folderDbId,
+  tagDbId,
+  NotionLibraryData,
+  FolderData,
+  TagData,
+  taskPageIconUrl,
+  documentPageIconUrl,
+  diaryPageIconUrl,
+};

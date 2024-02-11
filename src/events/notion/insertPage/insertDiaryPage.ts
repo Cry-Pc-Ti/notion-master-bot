@@ -1,13 +1,14 @@
-import { notion, masterDbId } from '../../../modules/notionModule';
+import { notion, masterDbId, diaryPageIconUrl } from '../../../modules/notionModule';
 import { CreatePageResponse } from '@notionhq/client/build/src/api-endpoints';
 
 export const insertDiary = async (date: string, dayOfWeek: string, diaryTagId: string) => {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const pageData: CreatePageResponse = await notion.pages.create({
       icon: {
         type: 'external',
         external: {
-          url: 'https://www.notion.so/icons/drafts_gray.svg?mode=dark',
+          url: diaryPageIconUrl,
         },
       },
       parent: {

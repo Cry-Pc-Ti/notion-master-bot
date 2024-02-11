@@ -39,7 +39,7 @@ export const insertClip = async (clipData: ClipData) => {
       },
     });
 
-    if (isFullPage(pageData)) clipData.notionUrl = pageData.url;
+    if (isFullPage(pageData)) clipData.notionPageUrl = pageData.url;
 
     return clipData;
   } catch (error) {
