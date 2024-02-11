@@ -14,11 +14,11 @@ export const createClipMessage = {
       .addFields({ name: 'Title', value: clipData.title })
       .setFooter({
         text: 'Notion',
-        iconURL: 'attachment://notion-logo.png',
+        iconURL: 'attachment://notion_logo.png',
       })
       .setTimestamp();
 
-    const fotterAttachment = new AttachmentBuilder('img/notion-logo.png');
+    const fotterAttachment = new AttachmentBuilder('img/notion_logo.png');
 
     return { embeds: [embed], files: [fotterAttachment], components: [] };
   },
@@ -39,11 +39,11 @@ export const createDiaryMessage = {
       .setColor(7506394)
       .setFooter({
         text: 'Notion',
-        iconURL: 'attachment://notion-logo.png',
+        iconURL: 'attachment://notion_logo.png',
       })
       .setTimestamp();
 
-    const fotterAttachment = new AttachmentBuilder('img/notion-logo.png');
+    const fotterAttachment = new AttachmentBuilder('img/notion_logo.png');
 
     return { embeds: [embed], files: [fotterAttachment] };
   },
@@ -61,11 +61,11 @@ export const createMemoMessage = {
       .addFields({ name: 'Tag', value: pageData.tagName })
       .setFooter({
         text: 'Notion',
-        iconURL: 'attachment://notion-logo.png',
+        iconURL: 'attachment://notion_logo.png',
       })
       .setTimestamp();
 
-    const fotterAttachment = new AttachmentBuilder('img/notion-logo.png');
+    const fotterAttachment = new AttachmentBuilder('img/notion_logo.png');
 
     return { embeds: [embed], files: [fotterAttachment], components: [] };
   },
@@ -77,7 +77,7 @@ export const createMemoMessage = {
       .setColor(7506394)
       .setFooter({
         text: 'Notion',
-        iconURL: 'attachment://notion-logo.png',
+        iconURL: 'attachment://notion_logo.png',
       })
       .setTimestamp();
 
@@ -88,7 +88,7 @@ export const createMemoMessage = {
       });
     }
 
-    const fotterAttachment = new AttachmentBuilder('img/notion-logo.png');
+    const fotterAttachment = new AttachmentBuilder('img/notion_logo.png');
 
     return { embeds: [embed], files: [fotterAttachment], components: [] };
   },
@@ -103,7 +103,7 @@ export const createTaskMessage = {
       .setColor(7506394)
       .setFooter({
         text: 'Notion',
-        iconURL: 'attachment://notion-logo.png',
+        iconURL: 'attachment://notion_logo.png',
       })
       .setTimestamp();
 
@@ -114,7 +114,7 @@ export const createTaskMessage = {
       });
     }
 
-    const fotterAttachment = new AttachmentBuilder('img/notion-logo.png');
+    const fotterAttachment = new AttachmentBuilder('img/notion_logo.png');
 
     return { embeds: [embed], files: [fotterAttachment], components: [] };
   },
@@ -126,7 +126,7 @@ export const createTaskMessage = {
       .setColor(7506394)
       .setFooter({
         text: 'Notion',
-        iconURL: 'attachment://notion-logo.png',
+        iconURL: 'attachment://notion_logo.png',
       })
       .setTimestamp();
 
@@ -137,7 +137,7 @@ export const createTaskMessage = {
       });
     }
 
-    const fotterAttachment = new AttachmentBuilder('img/notion-logo.png');
+    const fotterAttachment = new AttachmentBuilder('img/notion_logo.png');
 
     return { embeds: [embed], files: [fotterAttachment], components: [] };
   },
@@ -153,7 +153,7 @@ export const createTaskMessage = {
       .addFields({ name: 'Tag', value: tag, inline: true })
       .setFooter({
         text: 'Notion',
-        iconURL: 'attachment://notion-logo.png',
+        iconURL: 'attachment://notion_logo.png',
       })
       .setTimestamp();
 
@@ -165,7 +165,7 @@ export const createTaskMessage = {
       });
     }
 
-    const fotterAttachment = new AttachmentBuilder('img/notion-logo.png');
+    const fotterAttachment = new AttachmentBuilder('img/notion_logo.png');
 
     return { embeds: [embed], files: [fotterAttachment], components: [] };
   },
