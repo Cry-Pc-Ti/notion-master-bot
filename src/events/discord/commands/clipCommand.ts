@@ -13,6 +13,7 @@ import { insertClip } from '../../notion/insertPage/insertClipPage';
 import { createClipMessage } from '../embeds/createEmbeds';
 import { ClipData } from '../../../types/original/notion';
 import { jsonData } from '../../notion/readJson';
+import { log } from 'console';
 
 export const clipCommand = {
   // コマンドを定義
@@ -79,6 +80,13 @@ export const clipCommand = {
       return;
     }
 
+    // 入力された文字列がURL出ない場合、処理を終了
+    if (!isValidUrl(url)) {
+      await interaction.editReply('URLが無効です');
+      return;
+    }
+
+    // favariteの入力がない場合、値をfalseにする
     if (!favorite) favorite = false;
 
     const clipData: ClipData = {
@@ -86,7 +94,7 @@ export const clipCommand = {
       notionPageUrl: '',
       title: '',
       siteUrl: url,
-      tagId: [],
+      tag: [],
       favorite: favorite,
     };
 
@@ -95,7 +103,7 @@ export const clipCommand = {
       (folder) => folder.FolderName === 'Input'
     )?.PageId;
 
-    // タスクフォルダのページIDが取得できない場合、処理を終了
+    // InputフォルダのページIDが取得できない場合、処理を終了
     if (!inputFolderPageId) {
       await interaction.editReply('処理が失敗しました');
       return;
@@ -139,25 +147,32 @@ export const clipCommand = {
 
     collector.on('collect', async (selectMenuInteraction: StringSelectMenuInteraction) => {
       // セレクトメニューで選択されたタグのページIDを取得
-      clipData.tagId = selectMenuInteraction.values.map((value) => ({
+      clipData.tag = selectMenuInteraction.values.map((value) => ({
+        name: jsonData.Tag.find((tag) => tag.PageId === value)?.TagName || '',
         id: value,
       }));
 
       // URLからタイトルとfaviconの取得
       await fetchTitleAndFavicon(clipData);
 
-      // タイトルとfaviconが取得できない場合、処理を終了
-      if (!clipData.faviconUrl) {
-        await interaction.editReply('処理が失敗しました');
-        return;
-      }
-
-      // タイトルとfaviconの取得できた場合、Notionにページを挿入
+      // Notionにページを挿入
       await insertClip(clipData);
 
       // 埋め込みメッセージを作成・送信
+      console.log(clipData.title);
+
       const embed = createClipMessage.insert(clipData);
       await interaction.editReply(embed);
     });
   },
 };
+
+// URLのバリデーション関数
+function isValidUrl(url: string): boolean {
+  try {
+    new URL(url);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}

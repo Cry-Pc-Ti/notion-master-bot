@@ -1,6 +1,7 @@
 // 必要なモジュールをインポート
 import { EmbedBuilder, AttachmentBuilder } from 'discord.js';
 import { ClipData, TaskData } from '../../../types/original/notion';
+import { taskListViewUrl } from '../../../modules/notionModule';
 
 // Clipコマンドのメッセージを作成
 export const createClipMessage = {
@@ -17,6 +18,9 @@ export const createClipMessage = {
         iconURL: 'attachment://notion_logo.png',
       })
       .setTimestamp();
+
+    const tags = clipData.tag.map((tag) => tag.name).join('\n');
+    embed.addFields({ name: 'Tag', value: tags });
 
     const fotterAttachment = new AttachmentBuilder('img/notion_logo.png');
 
@@ -100,6 +104,7 @@ export const createTaskMessage = {
   list(pageData: { title: string; tagName: string; pageId: string; url: string }[]) {
     const embed = new EmbedBuilder()
       .setTitle('Task List')
+      .setURL(taskListViewUrl)
       .setColor(7506394)
       .setFooter({
         text: 'Notion',

@@ -31,6 +31,11 @@ export const insertDiary = async (date: string, dayOfWeek: string, diaryTagId: s
             },
           ],
         },
+        Date: {
+          date: {
+            start: date,
+          },
+        },
       },
     });
   } catch (error) {

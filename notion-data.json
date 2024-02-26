@@ -195,6 +195,18 @@
       }
     },
     {
+      "TagName": ".Input.Infomation.Geography",
+      "PageId": "73d8e9fe-363f-4f08-aa84-a28305d91179",
+      "MasterFolder": {
+        "FolderName": "Input",
+        "PageId": "b3a069ee-4d37-4d09-abbf-8c1e9f017b94",
+        "SubFolder": {
+          "FolderName": "Infomation",
+          "PageId": "34b4a2be-94f9-41b6-bd72-ede4484968ce"
+        }
+      }
+    },
+    {
       "TagName": ".Input.Infomation.Recipe",
       "PageId": "04dc4264-97b7-4ee5-8b83-6be48e4ee6ea",
       "MasterFolder": {
@@ -279,7 +291,7 @@
       }
     },
     {
-      "TagName": ".Input.Language.Discordjs",
+      "TagName": ".Input.Language.Discord.js",
       "PageId": "00f988e3-92bb-4712-bd7e-4045f643abfc",
       "MasterFolder": {
         "FolderName": "Input",
@@ -375,7 +387,7 @@
       }
     },
     {
-      "TagName": ".Input.Language.Programing",
+      "TagName": ".Input.Language.Programming",
       "PageId": "a4be8d73-d76a-4b15-b13b-80e847dc7f55",
       "MasterFolder": {
         "FolderName": "Input",

@@ -15,6 +15,9 @@ const taskPageIconUrl: string = 'https://www.notion.so/icons/checkmark_gray.svg'
 const documentPageIconUrl: string = 'https://www.notion.so/icons/document_gray.svg';
 const diaryPageIconUrl: string = 'https://www.notion.so/icons/drafts_gray.svg';
 
+const taskListViewUrl: string =
+  'https://www.notion.so/53b960ffc0134a33901e052276059d3c?v=899332e84d3846438c19a5912ef0aa18&pvs=4';
+
 export {
   notion,
   masterDbId,
@@ -26,4 +29,5 @@ export {
   taskPageIconUrl,
   documentPageIconUrl,
   diaryPageIconUrl,
+  taskListViewUrl,
 };

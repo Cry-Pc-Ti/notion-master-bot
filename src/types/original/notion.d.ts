@@ -34,7 +34,7 @@ export interface ClipData {
   notionPageUrl: string;
   title: string;
   siteUrl: string;
-  tagId: { id: string }[];
+  tag: { name: string; id: string }[];
   favorite: boolean;
 }
 

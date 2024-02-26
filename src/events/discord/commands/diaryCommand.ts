@@ -122,8 +122,6 @@ export const diaryCommand = {
       // 曜日を取得
       const dayOfWeek = new Date(date).toDateString().split(' ')[0];
 
-      console.log(date, dayOfWeek);
-
       // 日記ページを作成
       await insertDiary(date, dayOfWeek, diaryTagId);
     }

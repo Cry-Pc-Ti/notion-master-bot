@@ -31,7 +31,7 @@ export const insertClip = async (clipData: ClipData) => {
           url: clipData.siteUrl,
         },
         Tag: {
-          relation: clipData.tagId,
+          relation: clipData.tag,
         },
         Favorite: {
           checkbox: clipData.favorite,

@@ -10,7 +10,9 @@ export const fetchTitleAndFavicon = async (clipData: ClipData) => {
   try {
     // URLからWebサイトのタイトルを取得
     const response = await axios.get(clipData.siteUrl);
+
     const $ = cheerio.load(response.data);
+
     const title = $('title').text();
     if (title) clipData.title = title;
 
@@ -19,6 +21,7 @@ export const fetchTitleAndFavicon = async (clipData: ClipData) => {
   } catch (error) {
     console.error('Error Fetching Data:', error);
 
+    clipData.title = '';
     return clipData;
   }
 };

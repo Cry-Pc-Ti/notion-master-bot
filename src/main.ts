@@ -2,7 +2,6 @@
 import * as cron from 'node-cron';
 import { ChannelType, Interaction, REST, Routes } from 'discord.js';
 import { clientId, guildId, channelId, discord, token } from './modules/discordModule';
-import { saveNotionLibraryData } from './events/notion/saveNotionLibraryData';
 
 // コマンドをインポート
 import { clipCommand } from './events/discord/commands/clipCommand';
@@ -77,9 +76,9 @@ discord.on('interactionCreate', async (interaction: Interaction) => {
   }
 });
 
-// 毎日8:00と18:00にタスクを表示
+// 毎日7:00と16:00にタスクを表示
 discord.once('ready', () => {
-  cron.schedule('0 0 8,18 * * *', async () => {
+  cron.schedule('0 0 7,16 * * *', async () => {
     try {
       const channel = discord.channels.cache.get(channelId);
       if (channel) await taskCommand.sendTaskList(channel);
@@ -89,18 +88,8 @@ discord.once('ready', () => {
   });
 });
 
-// // 12時間ごとにNotionライブラリのデータを更新
-// cron.schedule('0 */12 * * *', async () => {
-//   try {
-//     // Notionライブラリのデータを更新
-//     await saveNotionLibraryData();
-//   } catch (error) {
-//     console.error('Notionライブラリの更新中にエラーが発生しました:', error);
-//   }
-// });
-
 // 1週間ごとに日記のページを作成
-cron.schedule('0 0 0 * * 0', async () => {
+cron.schedule('0 0 0 * * 1', async () => {
   try {
     const channel = discord.channels.cache.get(channelId);
 
