@@ -1,7 +1,7 @@
 // モジュールをインポート
-import * as cron from 'node-cron';
 import { ChannelType, Interaction, REST, Routes } from 'discord.js';
 import { clientId, guildId, channelId, discord, token } from './modules/discordModule';
+import * as cron from 'node-cron';
 
 // コマンドをインポート
 import { clipCommand } from './events/discord/commands/clipCommand';
@@ -25,7 +25,7 @@ const rest = new REST({ version: '10' }).setToken(token);
     });
     console.log('サーバー固有のコマンドが登録されました');
   } catch (error) {
-    console.error('コマンドの登録中にエラーが発生しました：', error);
+    console.error(`コマンドの登録中にエラーが発生しました： ${error}`);
   }
 })();
 
@@ -60,20 +60,28 @@ discord.on('interactionCreate', async (interaction: Interaction) => {
     }
   }
 
-  // AutoCompleteの登録
+  // Autocompleteの登録
   if (interaction.isAutocomplete()) {
     try {
-      if (interaction.commandName === clipCommand.data.name) {
-        await clipCommand.autocomplete(interaction);
-      } else if (interaction.commandName === memoCommand.data.name) {
-        await memoCommand.autocomplete(interaction);
-      } else if (interaction.commandName === taskCommand.data.name) {
-        await taskCommand.autocomplete(interaction);
+      const command = commands[interaction.commandName];
+      if (command && 'autocomplete' in command) {
+        await command.autocomplete(interaction);
       }
     } catch (error) {
       console.error(`Autocompleteの登録中にエラーが発生しました。: ${error}`);
     }
   }
+});
+
+// 12時間に１度、NotionLibraryのデータを更新
+discord.once('ready', () => {
+  cron.schedule('0 0 */12 * * *', async () => {
+    try {
+      libraryCommand.execute;
+    } catch (error) {
+      console.error(`NotionLibraryのデータ更新中にエラーが発生しました: ${error}`);
+    }
+  });
 });
 
 // 毎日7:00と16:00にタスクを表示

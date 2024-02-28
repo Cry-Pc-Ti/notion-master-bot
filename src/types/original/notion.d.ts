@@ -32,7 +32,7 @@ export interface NotionLibraryData {
 export interface ClipData {
   faviconUrl: string;
   notionPageUrl: string;
-  title: string;
+  title: string | null;
   siteUrl: string;
   tag: { name: string; id: string }[];
   favorite: boolean;
@@ -40,7 +40,7 @@ export interface ClipData {
 
 export interface DiaryData {
   relativDate: string;
-  happiness: string;
+  happiness: { tagName: string; tagId: string };
   lookback: string;
   date: string;
   tagId: string;

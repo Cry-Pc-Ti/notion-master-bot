@@ -12,7 +12,7 @@ import { insertMemo } from '../../notion/insertPage/insertMemoPage';
 import { queryMemoPage } from '../../notion/queryPage/queryMemoPage';
 import { fetchRelationName } from '../../notion/queryPage/fetchRelationName';
 import { createMemoMessage } from '../embeds/createEmbeds';
-import { jsonData } from '../../notion/readJson';
+import { getJsonData } from '../../notion/getJsonData';
 
 export const memoCommand = {
   // スラッシュコマンドの定義
@@ -63,6 +63,9 @@ export const memoCommand = {
       // 重複を確認するためのセット
       const addedFolder: Set<string> = new Set();
 
+      // NotionLibraryのデータを取得
+      const jsonData = getJsonData();
+
       // MemoフォルダのページIDを取得
       const memoFolderPageId: string | undefined = jsonData.Folder.SubFolder.find(
         (folder) => folder.FolderName === 'Memo'
@@ -110,6 +113,9 @@ export const memoCommand = {
           await interaction.editReply('処理が失敗しました');
           return;
         }
+
+        // NotionLibraryのデータを取得
+        const jsonData = getJsonData();
 
         // メモフォルダのページIDを取得
         const memoFolderPageId: string | undefined = jsonData.Folder.SubFolder.find(
@@ -173,6 +179,9 @@ export const memoCommand = {
           await interaction.editReply('処理が失敗しました');
           return;
         }
+
+        // NotionLibraryのデータを取得
+        const jsonData = getJsonData();
 
         // メモフォルダのページIDを取得
         const memoFolderPageId: string | undefined = jsonData.Folder.SubFolder.find(

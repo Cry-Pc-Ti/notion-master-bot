@@ -3,7 +3,7 @@ import { isFullPage } from '@notionhq/client';
 import { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
 import { PropertyFilter } from '../../../types/@notionhq/api-endpoints';
 import { fetchRelationName } from './fetchRelationName';
-import { jsonData } from '../readJson';
+import { getJsonData } from '../getJsonData';
 import { TaskData } from '../../../types/original/notion';
 
 export const queryTask = async (relativDate: string) => {
@@ -37,6 +37,9 @@ export const queryTask = async (relativDate: string) => {
     } else if (relativDate === 'tbd') {
       dateProperty = { property: 'Date', date: { is_empty: true } };
     }
+
+    // NotionLibraryのデータを取得
+    const jsonData = getJsonData();
 
     // TaskフォルダのページIDを取得
     const taskFolderPageId: string | undefined = jsonData.Folder.SubFolder.find(

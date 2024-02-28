@@ -3,14 +3,20 @@ import * as cheerio from 'cheerio';
 import { ClipData } from '../types/original/notion';
 
 export const fetchTitleAndFavicon = async (clipData: ClipData) => {
+  console.log(clipData);
+
   // ファビコンタグを取得
   const faviconAddress = 'http://www.google.com/s2/favicons?sz=256&domain=';
   clipData.faviconUrl = faviconAddress + clipData.siteUrl;
 
   try {
     // URLからWebサイトのタイトルを取得
-    const response = await axios.get(clipData.siteUrl);
-
+    const response = await axios.get(clipData.siteUrl, {
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
+      },
+    });
     const $ = cheerio.load(response.data);
 
     const title = $('title').text();
@@ -19,9 +25,8 @@ export const fetchTitleAndFavicon = async (clipData: ClipData) => {
     // 取得したタイトルとファビコンURLを返却
     return clipData;
   } catch (error) {
-    console.error('Error Fetching Data:', error);
+    if (error instanceof Error) console.error('Error Fetching Data:', error.message);
 
-    clipData.title = '';
     return clipData;
   }
 };

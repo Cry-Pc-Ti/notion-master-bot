@@ -12,8 +12,8 @@ import { fetchTitleAndFavicon } from '../../fetchTitleAndFavicon';
 import { insertClip } from '../../notion/insertPage/insertClipPage';
 import { createClipMessage } from '../embeds/createEmbeds';
 import { ClipData } from '../../../types/original/notion';
-import { jsonData } from '../../notion/readJson';
-import { log } from 'console';
+import { getJsonData } from '../../notion/getJsonData';
+import { isValidUrl } from '../../isValidationUrl';
 
 export const clipCommand = {
   // コマンドを定義
@@ -39,6 +39,9 @@ export const clipCommand = {
 
       // 重複を確認するためのセット
       const addedFolder: Set<string> = new Set();
+
+      // NotionLibraryのデータを取得
+      const jsonData = getJsonData();
 
       // マスタフォルダページIDがInputのサブフォルダを取得
       const subFolderPageIds: string[] | undefined = jsonData.Folder.MasterFolder.find(
@@ -81,6 +84,7 @@ export const clipCommand = {
     }
 
     // 入力された文字列がURL出ない場合、処理を終了
+
     if (!isValidUrl(url)) {
       await interaction.editReply('URLが無効です');
       return;
@@ -92,11 +96,23 @@ export const clipCommand = {
     const clipData: ClipData = {
       faviconUrl: '',
       notionPageUrl: '',
-      title: '',
+      title: null,
       siteUrl: url,
       tag: [],
       favorite: favorite,
     };
+
+    // URLからタイトルとfaviconの取得
+    await fetchTitleAndFavicon(clipData);
+
+    // タイトルが取得できない場合、処理を終了
+    if (!clipData.title) {
+      await interaction.editReply('処理が失敗しました');
+      return;
+    }
+
+    // NotionLibraryのデータを取得
+    const jsonData = getJsonData();
 
     // InputフォルダのページIDを取得
     const inputFolderPageId: string | undefined = jsonData.Folder.MasterFolder.find(
@@ -152,27 +168,12 @@ export const clipCommand = {
         id: value,
       }));
 
-      // URLからタイトルとfaviconの取得
-      await fetchTitleAndFavicon(clipData);
-
       // Notionにページを挿入
       await insertClip(clipData);
 
       // 埋め込みメッセージを作成・送信
-      console.log(clipData.title);
-
       const embed = createClipMessage.insert(clipData);
-      await interaction.editReply(embed);
+      if (embed) await interaction.editReply(embed);
     });
   },
 };
-
-// URLのバリデーション関数
-function isValidUrl(url: string): boolean {
-  try {
-    new URL(url);
-    return true;
-  } catch (error) {
-    return false;
-  }
-}

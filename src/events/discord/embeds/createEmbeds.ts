@@ -1,11 +1,13 @@
 // 必要なモジュールをインポート
 import { EmbedBuilder, AttachmentBuilder } from 'discord.js';
-import { ClipData, TaskData } from '../../../types/original/notion';
+import { ClipData, DiaryData, TaskData } from '../../../types/original/notion';
 import { taskListViewUrl } from '../../../modules/notionModule';
 
 // Clipコマンドのメッセージを作成
 export const createClipMessage = {
   insert(clipData: ClipData) {
+    if (!clipData.title) return;
+
     // 埋め込みメッセージを作成
     const embed = new EmbedBuilder()
       .setTitle('Clip Saved')
@@ -30,16 +32,16 @@ export const createClipMessage = {
 
 // Diaryコマンドのメッセージを作成
 export const createDiaryMessage = {
-  update(date: string, notionPageUrl: string) {
+  update(diaryData: DiaryData) {
     // 曜日を取得
     const days: string[] = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const dayOfWeek: string = days[new Date(date).getDay()];
+    const dayOfWeek: string = days[new Date(diaryData.date).getDay()];
 
     // 埋め込みメッセージを作成
     const embed = new EmbedBuilder()
       .setTitle('Saved Diary')
-      .setURL(notionPageUrl)
-      .addFields({ name: 'Saved Diary', value: `${date} ${dayOfWeek}` })
+      .setURL(diaryData.notionPageUrl)
+      .addFields({ name: `${diaryData.date} ${dayOfWeek}`, value: diaryData.happiness.tagName })
       .setColor(7506394)
       .setFooter({
         text: 'Notion',

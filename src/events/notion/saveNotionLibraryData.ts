@@ -184,7 +184,3 @@ export const saveNotionLibraryData = async () => {
     console.error('Notionライブラリのデータ取得及び保存中にエラーが発生しました。: ', error);
   }
 };
-
-(async () => {
-  await saveNotionLibraryData();
-})();

@@ -4,6 +4,7 @@ import { CreatePageResponse } from '@notionhq/client/build/src/api-endpoints';
 import { ClipData } from '../../../types/original/notion';
 
 export const insertClip = async (clipData: ClipData) => {
+  if (!clipData.title) return;
   try {
     const pageData: CreatePageResponse = await notion.pages.create({
       icon: {
@@ -44,5 +45,6 @@ export const insertClip = async (clipData: ClipData) => {
     return clipData;
   } catch (error) {
     console.error('Notion DB Error : ', error);
+    return;
   }
 };

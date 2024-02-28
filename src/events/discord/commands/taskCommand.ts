@@ -15,7 +15,7 @@ import { updateTask } from '../../notion/updatePage/updateTaskPage';
 import { insertTask } from '../../notion/insertPage/insertTaskPage';
 import { createTaskMessage } from '../embeds/createEmbeds';
 import { fetchRelationName } from '../../notion/queryPage/fetchRelationName';
-import { jsonData } from '../../notion/readJson';
+import { getJsonData } from '../../notion/getJsonData';
 import { TaskData } from '../../../types/original/notion';
 
 export const taskCommand = {
@@ -88,6 +88,9 @@ export const taskCommand = {
 
       // 重複を確認するためのセット
       const addedFolder: Set<string> = new Set();
+
+      // NotionLibraryのデータを取得
+      const jsonData = getJsonData();
 
       // TaskフォルダのページIDを取得
       const taskFolderPageId: string | undefined = jsonData.Folder.SubFolder.find(
@@ -256,6 +259,9 @@ export const taskCommand = {
           await interaction.editReply('処理が失敗しました');
           return;
         }
+
+        // NotionLibraryのデータを取得
+        const jsonData = getJsonData();
 
         // TaskフォルダのページIDを取得
         const taskFolderPageId: string | undefined = jsonData.Folder.SubFolder.find(

@@ -1,9 +1,16 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
+import {
+  SlashCommandBuilder,
+  ChatInputCommandInteraction,
+  AutocompleteInteraction,
+  ApplicationCommandOptionChoiceData,
+} from 'discord.js';
 import { queryDiaryPage } from '../../notion/queryPage/queryDiaryPage';
 import { updateDiary } from '../../notion/updatePage/updateDiaryPage';
 import { createDiaryMessage } from '../embeds/createEmbeds';
 import { DiaryData } from '../../../types/original/notion';
 import { insertDiary } from '../../notion/insertPage/insertDiaryPage';
+import { getJsonData } from '../../notion/getJsonData';
+import { diaryTagId } from '../../../modules/notionModule';
 
 export const diaryCommand = {
   data: new SlashCommandBuilder()
@@ -33,33 +40,63 @@ export const diaryCommand = {
       option
         .setName('happiness')
         .setDescription('Set Happiness')
-        .addChoices(
-          {
-            name: '★★★★★',
-            value: '0aff3cbc-9b40-4727-ab8b-7c94b5d1667d',
-          },
-          {
-            name: '★★★★',
-            value: '9a48163b-bfb1-45bc-a314-749bf502350d',
-          },
-          {
-            name: '★★★',
-            value: 'f8316e13-e347-4473-b4d7-18fc33edd88a',
-          },
-          {
-            name: '★★',
-            value: '093f3a55-53da-4f4c-b988-73c5c7c3e997',
-          },
-          {
-            name: '★',
-            value: '6f0851c2-0aea-45d8-9921-74c86569ae48',
-          }
-        )
+        .setAutocomplete(true)
         .setRequired(true)
     )
     .addStringOption((option) =>
       option.setName('lookback').setDescription('Write Lookback').setRequired(true)
     ),
+
+  async autocomplete(interaction: AutocompleteInteraction) {
+    // optionの情報を取得
+    const forcusedOption = interaction.options.getFocused(true);
+
+    // optionがtagの場合
+    if (forcusedOption.name === 'happiness') {
+      // Autocompleteの情報を取得
+      const autocompleteChoice: ApplicationCommandOptionChoiceData[] = [];
+
+      // 重複を確認するためのセット
+      const addedFolder: Set<string> = new Set();
+
+      // NotionLibraryのデータを取得
+      const jsonData = getJsonData();
+
+      // DiaryフォルダのページIDを取得
+      const diaryFolderPageId: string | undefined = jsonData.Folder.SubFolder.find(
+        (folder) => folder.FolderName === 'Diary'
+      )?.PageId;
+
+      // サブフォルダページがDiaryのタグを取得
+      for (const diaryTag of jsonData.Tag) {
+        if (
+          diaryFolderPageId &&
+          diaryTag.MasterFolder.SubFolder.PageId &&
+          diaryTag.MasterFolder.SubFolder.PageId.includes(diaryFolderPageId)
+        ) {
+          const pageId = diaryTag.PageId;
+
+          // TagNameから「.Thiking.Diary.」を除外
+          const tagName: string = diaryTag.TagName.split('.').pop() as string;
+
+          if (!addedFolder.has(tagName)) {
+            autocompleteChoice.push({ name: tagName, value: pageId });
+            addedFolder.add(tagName);
+          }
+        }
+
+        // autocompleteChoiceを降順に並び替え
+        autocompleteChoice.sort((a, b) => {
+          if (a.name < b.name) return 1;
+          if (a.name > b.name) return -1;
+          return 0;
+        });
+      }
+
+      // Autocompleteを登録
+      await interaction.respond(autocompleteChoice);
+    }
+  },
 
   async execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
@@ -71,20 +108,26 @@ export const diaryCommand = {
       const happiness: string | null = options.getString('happiness');
       const lookback: string | null = options.getString('lookback');
 
-      if (!relativDate || !happiness || !lookback) return;
+      if (!relativDate || !happiness || !lookback) {
+        await interaction.editReply('処理が失敗しました');
+        return;
+      }
 
       // DiaryタグのページIDを取得
-      const diaryTagId: string = '776bc3253a04467eae4c9f4dcc186b3d';
-
       const diaryData: DiaryData = {
         relativDate: relativDate,
-        happiness: happiness,
+        happiness: { tagName: '', tagId: happiness },
         lookback: lookback,
         date: '',
         tagId: diaryTagId,
         pageId: '',
         notionPageUrl: '',
       };
+
+      // happinesのTagIdからTagNameを取得
+      const jsonData = getJsonData();
+      const tagName = jsonData.Tag.find((tag) => tag.PageId === happiness)?.TagName;
+      diaryData.happiness.tagName = tagName as string;
 
       // 相対日付をもとにPageID, URLを取得
       await queryDiaryPage(diaryData);
@@ -99,7 +142,7 @@ export const diaryCommand = {
       await updateDiary(diaryData);
 
       // 埋め込みメッセージを作成
-      const embeds = createDiaryMessage.update(diaryData.date, diaryData.notionPageUrl);
+      const embeds = createDiaryMessage.update(diaryData);
 
       // メッセージを送信
       await interaction.editReply(embeds);
@@ -111,8 +154,6 @@ export const diaryCommand = {
 
   // １週間分の日記ページを作成(毎週日曜日に実行)
   async createDiaryPage() {
-    const diaryTagId: string = '776bc325-3a04-467e-ae4c-9f4dcc186b3d';
-
     // 月曜から日曜までの1週間分の日記ページを作成
     for (let i = 0; i < 7; i++) {
       const date = new Date(new Date().setDate(new Date().getDate() + i + 1))

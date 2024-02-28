@@ -12,7 +12,7 @@ export const updateDiary = async (diaryData: DiaryData) => {
               id: diaryData.tagId,
             },
             {
-              id: diaryData.happiness,
+              id: diaryData.happiness.tagId,
             },
           ],
         },
