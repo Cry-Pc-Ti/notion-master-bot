@@ -11,8 +11,8 @@ import {
 import { insertMemo } from '../../notion/insertPage/insertMemoPage';
 import { queryMemoPage } from '../../notion/queryPage/queryMemoPage';
 import { fetchRelationName } from '../../notion/queryPage/fetchRelationName';
-import { createMemoMessage } from '../embeds/createEmbeds';
-import { getJsonData } from '../../notion/getJsonData';
+import { createMemoMessage } from '../message/createEmbed';
+import { getJsonData } from '../../notion/common/getJsonData';
 
 export const memoCommand = {
   // スラッシュコマンドの定義
@@ -33,7 +33,8 @@ export const memoCommand = {
         .addStringOption((option) =>
           option.setName('title').setDescription('Set Title').setRequired(true)
         )
-        .addStringOption((option) => option.setName('body').setDescription('Set Body'))
+        // .addStringOption((option) => option.setName('body').setDescription('Set Body'))
+        .addBooleanOption((option) => option.setName('body').setDescription('Set Body'))
     )
     .addSubcommand((command) =>
       command
@@ -55,7 +56,7 @@ export const memoCommand = {
     // optionの情報を取得
     const forcusedOption = interaction.options.getFocused(true);
 
-    // optionがtagの場合
+    // optionがfolderの場合
     if (forcusedOption.name === 'folder') {
       // Autocompleteの情報を取得
       const autocompleteChoice: ApplicationCommandOptionChoiceData[] = [];
@@ -66,17 +67,17 @@ export const memoCommand = {
       // NotionLibraryのデータを取得
       const jsonData = getJsonData();
 
-      // MemoフォルダのページIDを取得
-      const memoFolderPageId: string | undefined = jsonData.Folder.SubFolder.find(
-        (folder) => folder.FolderName === 'Memo'
+      // OutputフォルダのページIDを取得
+      const outputFolderPageId: string | undefined = jsonData.Folder.SubFolder.find(
+        (folder) => folder.FolderName === 'Output'
       )?.PageId;
 
-      // サブフォルダページIDがMemoのマスタフォルダを取得
+      // サブフォルダページIDがOutputのマスタフォルダを取得
       for (const masterFolder of jsonData.Folder.MasterFolder) {
         if (
-          memoFolderPageId &&
+          outputFolderPageId &&
           masterFolder.SubFolderPageId &&
-          masterFolder.SubFolderPageId.includes(memoFolderPageId)
+          masterFolder.SubFolderPageId.includes(outputFolderPageId)
         ) {
           const folderName = masterFolder.FolderName;
           const pageId = masterFolder.PageId;
@@ -87,6 +88,7 @@ export const memoCommand = {
           }
         }
       }
+
       // Autocompleteを登録
       await interaction.respond(autocompleteChoice);
     }
@@ -102,11 +104,9 @@ export const memoCommand = {
       // メモ追加処理
       if (subCommand === 'add') {
         // コマンドに入力された値を取得
+        const masterFolderPageId: string | null = options.getString('folder');
         const title: string | null = options.getString('title');
         const body: string | null = options.getString('body');
-        const masterFolderPageId: string | null = options.getString('folder');
-
-        console.log(masterFolderPageId);
 
         // 必須項目が入力されていない場合、処理終了
         if (!masterFolderPageId || !title) {
@@ -118,12 +118,12 @@ export const memoCommand = {
         const jsonData = getJsonData();
 
         // メモフォルダのページIDを取得
-        const memoFolderPageId: string | undefined = jsonData.Folder.SubFolder.find(
-          (folder) => folder.FolderName === 'Memo'
+        const outputFolderPageId: string | undefined = jsonData.Folder.SubFolder.find(
+          (folder) => folder.FolderName === 'Output'
         )?.PageId;
 
         // メモフォルダのページIDが取得できない場合、処理を終了
-        if (!memoFolderPageId) {
+        if (!outputFolderPageId) {
           await interaction.editReply('処理が失敗しました');
           return;
         }
@@ -132,7 +132,7 @@ export const memoCommand = {
         const matchingTags = jsonData.Tag.filter(
           (tag) =>
             tag.MasterFolder.PageId === masterFolderPageId &&
-            tag.MasterFolder.SubFolder.PageId === memoFolderPageId
+            tag.MasterFolder.SubFolder.PageId === outputFolderPageId
         );
 
         // セレクトメニューを作成
@@ -149,12 +149,12 @@ export const memoCommand = {
         const selectResponse = await interaction.editReply({ components: [row] });
 
         // セレクトメニューで選択された値を取得
-        const collector = selectResponse.createMessageComponentCollector({
+        const tagCollector = selectResponse.createMessageComponentCollector({
           componentType: ComponentType.StringSelect,
           filter: (selectMenuInteraction) => selectMenuInteraction.user.id === interaction.user.id,
         });
 
-        collector.on('collect', async (selectMenuInteraction: StringSelectMenuInteraction) => {
+        tagCollector.on('collect', async (selectMenuInteraction: StringSelectMenuInteraction) => {
           // セレクトメニューで選択されたタグのページIDを取得
           const selectedTagId = selectMenuInteraction.values[0];
 
@@ -183,13 +183,13 @@ export const memoCommand = {
         // NotionLibraryのデータを取得
         const jsonData = getJsonData();
 
-        // メモフォルダのページIDを取得
-        const memoFolderPageId: string | undefined = jsonData.Folder.SubFolder.find(
-          (folder) => folder.FolderName === 'Memo'
+        // OutputフォルダのページIDを取得
+        const outputFolderPageId: string | undefined = jsonData.Folder.SubFolder.find(
+          (folder) => folder.FolderName === 'Output'
         )?.PageId;
 
         // 必須項目が入力されていない場合、処理終了
-        if (!memoFolderPageId) {
+        if (!outputFolderPageId) {
           await interaction.editReply('処理が失敗しました');
           return;
         }
@@ -198,7 +198,7 @@ export const memoCommand = {
         const matchingTags = jsonData.Tag.filter(
           (tag) =>
             tag.MasterFolder.PageId === masterFolderPageId &&
-            tag.MasterFolder.SubFolder.PageId === memoFolderPageId
+            tag.MasterFolder.SubFolder.PageId === outputFolderPageId
         );
 
         // セレクトメニューを作成
@@ -214,12 +214,12 @@ export const memoCommand = {
         const selectResponse = await interaction.editReply({ components: [row] });
 
         // セレクトメニューで選択された値を取得
-        const collector = selectResponse.createMessageComponentCollector({
+        const tagCollector = selectResponse.createMessageComponentCollector({
           componentType: ComponentType.StringSelect,
           filter: (selectMenuInteraction) => selectMenuInteraction.user.id === interaction.user.id,
         });
 
-        collector.on('collect', async (selectMenuInteraction: StringSelectMenuInteraction) => {
+        tagCollector.on('collect', async (selectMenuInteraction: StringSelectMenuInteraction) => {
           // セレクトメニューで選択されたタグのページIDを取得
           const selectedTagId = selectMenuInteraction.values[0];
 
@@ -236,7 +236,7 @@ export const memoCommand = {
           await interaction.editReply(embed);
         });
       }
-    } catch (error: unknown) {
+    } catch (error) {
       await interaction.editReply('処理が失敗しました');
       console.error(error);
     }

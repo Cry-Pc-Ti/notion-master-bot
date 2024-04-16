@@ -13,9 +13,9 @@ import {
 import { queryTask } from '../../notion/queryPage/queryTaskPage';
 import { updateTask } from '../../notion/updatePage/updateTaskPage';
 import { insertTask } from '../../notion/insertPage/insertTaskPage';
-import { createTaskMessage } from '../embeds/createEmbeds';
+import { createTaskMessage } from '../message/createEmbed';
 import { fetchRelationName } from '../../notion/queryPage/fetchRelationName';
-import { getJsonData } from '../../notion/getJsonData';
+import { getJsonData } from '../../notion/common/getJsonData';
 import { TaskData } from '../../../types/original/notion';
 
 export const taskCommand = {
@@ -216,13 +216,13 @@ export const taskCommand = {
           const selectResponse = await interaction.editReply({ components: [row] });
 
           // セレクトメニューで選択された値を取得
-          const collector = selectResponse.createMessageComponentCollector({
+          const tagCollector = selectResponse.createMessageComponentCollector({
             componentType: ComponentType.StringSelect,
             filter: (selectMenuInteraction) =>
               selectMenuInteraction.user.id === interaction.user.id,
           });
 
-          collector.on('collect', async (selectMenuInteraction: StringSelectMenuInteraction) => {
+          tagCollector.on('collect', async (selectMenuInteraction: StringSelectMenuInteraction) => {
             const checkTaskPageId = selectMenuInteraction.values;
             const checkedTaskData: TaskData[] = [];
 
@@ -296,12 +296,12 @@ export const taskCommand = {
         const selectResponse = await interaction.editReply({ components: [row] });
 
         // セレクトメニューで選択された値を取得
-        const collector = selectResponse.createMessageComponentCollector({
+        const tagCollector = selectResponse.createMessageComponentCollector({
           componentType: ComponentType.StringSelect,
           filter: (selectMenuInteraction) => selectMenuInteraction.user.id === interaction.user.id,
         });
 
-        collector.on('collect', async (selectMenuInteraction: StringSelectMenuInteraction) => {
+        tagCollector.on('collect', async (selectMenuInteraction: StringSelectMenuInteraction) => {
           // セレクトメニューで選択されたタグのページIDを取得
           const selectedTagId = selectMenuInteraction.values[0];
 

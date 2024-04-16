@@ -6,10 +6,10 @@ import {
 } from 'discord.js';
 import { queryDiaryPage } from '../../notion/queryPage/queryDiaryPage';
 import { updateDiary } from '../../notion/updatePage/updateDiaryPage';
-import { createDiaryMessage } from '../embeds/createEmbeds';
+import { createDiaryMessage } from '../message/createEmbed';
 import { DiaryData } from '../../../types/original/notion';
 import { insertDiary } from '../../notion/insertPage/insertDiaryPage';
-import { getJsonData } from '../../notion/getJsonData';
+import { getJsonData } from '../../notion/common/getJsonData';
 import { diaryTagId } from '../../../modules/notionModule';
 
 export const diaryCommand = {
@@ -155,10 +155,16 @@ export const diaryCommand = {
   // １週間分の日記ページを作成(毎週日曜日に実行)
   async createDiaryPage() {
     // 月曜から日曜までの1週間分の日記ページを作成
+    let startDay = '';
+    let endDay = '';
+
     for (let i = 0; i < 7; i++) {
-      const date = new Date(new Date().setDate(new Date().getDate() + i + 1))
+      const date = new Date(new Date().setDate(new Date().getDate() + i))
         .toISOString()
         .split('T')[0];
+
+      if (i === 0) startDay = date;
+      if (i === 6) endDay = date;
 
       // 曜日を取得
       const dayOfWeek = new Date(date).toDateString().split(' ')[0];
@@ -166,6 +172,6 @@ export const diaryCommand = {
       // 日記ページを作成
       await insertDiary(date, dayOfWeek, diaryTagId);
     }
-    console.log('Diary Page Created');
+    console.log(`Diary Page Created: ${startDay} ~ ${endDay}`);
   },
 };

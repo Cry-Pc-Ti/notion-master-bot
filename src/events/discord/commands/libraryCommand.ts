@@ -1,8 +1,8 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
-import { saveNotionLibraryData } from '../../notion/saveNotionLibraryData';
+import { saveNotionLibraryData } from '../../notion/common/saveNotionLibraryData';
 
+// コマンドを定義
 export const libraryCommand = {
-  // コマンドを定義
   data: new SlashCommandBuilder()
     .setName('library')
     .setDescription("Update Notion Library (It'll take some time)")

@@ -8,12 +8,12 @@ import {
   StringSelectMenuBuilder,
   StringSelectMenuInteraction,
 } from 'discord.js';
-import { fetchTitleAndFavicon } from '../../fetchTitleAndFavicon';
+import { fetchTitleAndFavicon } from '../../common/fetchTitleAndFavicon';
 import { insertClip } from '../../notion/insertPage/insertClipPage';
-import { createClipMessage } from '../embeds/createEmbeds';
+import { createClipMessage } from '../message/createEmbed';
 import { ClipData } from '../../../types/original/notion';
-import { getJsonData } from '../../notion/getJsonData';
-import { isValidUrl } from '../../isValidationUrl';
+import { getJsonData } from '../../notion/common/getJsonData';
+import { isValidUrl } from '../../common/isValidationUrl';
 
 export const clipCommand = {
   // コマンドを定義
@@ -156,12 +156,12 @@ export const clipCommand = {
     const selectResponse = await interaction.editReply({ components: [row] });
 
     // セレクトメニューで選択された値を取得
-    const collector = selectResponse.createMessageComponentCollector({
+    const tagCollector = selectResponse.createMessageComponentCollector({
       componentType: ComponentType.StringSelect,
       filter: (selectMenuInteraction) => selectMenuInteraction.user.id === interaction.user.id,
     });
 
-    collector.on('collect', async (selectMenuInteraction: StringSelectMenuInteraction) => {
+    tagCollector.on('collect', async (selectMenuInteraction: StringSelectMenuInteraction) => {
       // セレクトメニューで選択されたタグのページIDを取得
       clipData.tag = selectMenuInteraction.values.map((value) => ({
         name: jsonData.Tag.find((tag) => tag.PageId === value)?.TagName || '',

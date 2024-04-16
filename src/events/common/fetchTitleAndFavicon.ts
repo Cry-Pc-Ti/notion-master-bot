@@ -1,10 +1,8 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
-import { ClipData } from '../types/original/notion';
+import { ClipData } from '../../types/original/notion';
 
 export const fetchTitleAndFavicon = async (clipData: ClipData) => {
-  console.log(clipData);
-
   // ファビコンタグを取得
   const faviconAddress = 'http://www.google.com/s2/favicons?sz=256&domain=';
   clipData.faviconUrl = faviconAddress + clipData.siteUrl;

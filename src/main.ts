@@ -9,6 +9,7 @@ import { diaryCommand } from './events/discord/commands/diaryCommand';
 import { memoCommand } from './events/discord/commands/memoCommand';
 import { libraryCommand } from './events/discord/commands/libraryCommand';
 import { taskCommand } from './events/discord/commands/taskCommand';
+import { saveNotionLibraryData } from './events/notion/common/saveNotionLibraryData';
 
 // サーバーにコマンドを登録
 const rest = new REST({ version: '10' }).setToken(token);
@@ -77,9 +78,10 @@ discord.on('interactionCreate', async (interaction: Interaction) => {
 discord.once('ready', () => {
   cron.schedule('0 0 */12 * * *', async () => {
     try {
-      libraryCommand.execute;
+      await saveNotionLibraryData();
+      console.log('Notion Data Library Updated!');
     } catch (error) {
-      console.error(`NotionLibraryのデータ更新中にエラーが発生しました: ${error}`);
+      console.error(`Notin Data Library Update Error: ${error}`);
     }
   });
 });
@@ -91,7 +93,7 @@ discord.once('ready', () => {
       const channel = discord.channels.cache.get(channelId);
       if (channel) await taskCommand.sendTaskList(channel);
     } catch (error) {
-      console.error(`タスクの表示中にエラーが発生しました: ${error}`);
+      console.error(`Show Tasks Error: ${error}`);
     }
   });
 });
@@ -107,7 +109,7 @@ cron.schedule('0 0 0 * * 1', async () => {
     if (channel && channel.type === ChannelType.GuildText)
       await channel.send("This Week's Diary Page Created.");
   } catch (error) {
-    console.error(`日記ページの作成中にエラーが発生しました: ${error}`);
+    console.error(`Create Diary Error: ${error}`);
   }
 });
 

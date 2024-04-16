@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "ts-node src/main.ts",
-    "test": "ts-node src/events/notion/saveNotionLibraryData.ts"
+    "library": "ts-node src/events/notion/common/updateNotionLibraryData.ts"
   },
   "keywords": [],
   "author": "",
