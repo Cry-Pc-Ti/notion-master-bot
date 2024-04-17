@@ -9,7 +9,7 @@ import { updateDiary } from '../../notion/updatePage/updateDiaryPage';
 import { createDiaryMessage } from '../message/createEmbed';
 import { DiaryData } from '../../../types/original/notion';
 import { insertDiary } from '../../notion/insertPage/insertDiaryPage';
-import { getJsonData } from '../../notion/common/getJsonData';
+import { getJsonData } from '../../notion/libraryData/getJsonData';
 import { diaryTagId } from '../../../modules/notionModule';
 
 export const diaryCommand = {

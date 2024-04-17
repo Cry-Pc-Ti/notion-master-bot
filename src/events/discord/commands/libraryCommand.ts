@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
-import { saveNotionLibraryData } from '../../notion/common/saveNotionLibraryData';
+import { saveNotionLibraryData } from '../../notion/libraryData/saveNotionLibraryData';
 
 // コマンドを定義
 export const libraryCommand = {

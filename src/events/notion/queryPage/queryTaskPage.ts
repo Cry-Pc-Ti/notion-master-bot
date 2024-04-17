@@ -3,7 +3,7 @@ import { isFullPage } from '@notionhq/client';
 import { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
 import { PropertyFilter } from '../../../types/@notionhq/api-endpoints';
 import { fetchRelationName } from './fetchRelationName';
-import { getJsonData } from '../common/getJsonData';
+import { getJsonData } from '../libraryData/getJsonData';
 import { TaskData } from '../../../types/original/notion';
 
 export const queryTask = async (relativDate: string) => {

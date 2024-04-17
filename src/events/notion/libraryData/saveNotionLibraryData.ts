@@ -183,3 +183,9 @@ export const saveNotionLibraryData = async () => {
     console.error('Error Notion Library Data not Saved: ', error);
   }
 };
+
+(async () => {
+  console.log('Updating Library...');
+  await saveNotionLibraryData();
+  console.log('Library Updated!');
+})();

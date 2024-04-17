@@ -9,7 +9,7 @@ import { diaryCommand } from './events/discord/commands/diaryCommand';
 import { memoCommand } from './events/discord/commands/memoCommand';
 import { libraryCommand } from './events/discord/commands/libraryCommand';
 import { taskCommand } from './events/discord/commands/taskCommand';
-import { saveNotionLibraryData } from './events/notion/common/saveNotionLibraryData';
+import { saveNotionLibraryData } from './events/notion/libraryData/saveNotionLibraryData';
 
 // サーバーにコマンドを登録
 const rest = new REST({ version: '10' }).setToken(token);

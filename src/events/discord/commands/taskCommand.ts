@@ -15,7 +15,7 @@ import { updateTask } from '../../notion/updatePage/updateTaskPage';
 import { insertTask } from '../../notion/insertPage/insertTaskPage';
 import { createTaskMessage } from '../message/createEmbed';
 import { fetchRelationName } from '../../notion/queryPage/fetchRelationName';
-import { getJsonData } from '../../notion/common/getJsonData';
+import { getJsonData } from '../../notion/libraryData/getJsonData';
 import { TaskData } from '../../../types/original/notion';
 
 export const taskCommand = {

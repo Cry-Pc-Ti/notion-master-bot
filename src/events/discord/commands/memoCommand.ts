@@ -12,7 +12,7 @@ import { insertMemo } from '../../notion/insertPage/insertMemoPage';
 import { queryMemoPage } from '../../notion/queryPage/queryMemoPage';
 import { fetchRelationName } from '../../notion/queryPage/fetchRelationName';
 import { createMemoMessage } from '../message/createEmbed';
-import { getJsonData } from '../../notion/common/getJsonData';
+import { getJsonData } from '../../notion/libraryData/getJsonData';
 
 export const memoCommand = {
   // スラッシュコマンドの定義
