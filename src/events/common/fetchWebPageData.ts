@@ -1,19 +1,23 @@
 import * as https from 'https';
-import * as cheerio from 'cheerio';
 import * as url from 'url';
+import * as cheerio from 'cheerio';
+import { faviconToPng } from './faviconToPng';
+import { documentPageIconUrl } from '../../modules/notionModule';
 
-interface PageData {
+interface WebPageData {
   title: string | null;
-  faviconUrl: string | null;
+  iconUrl: string | null;
 }
 
-export const fetchWebPageData = (inputUrl: string): Promise<PageData> => {
-  return new Promise((resolve) => {
+let iconUrl = '';
+
+export const fetchWebPageData = async (inputUrl: string): Promise<WebPageData> => {
+  return new Promise(async (resolve) => {
     https
       .get(inputUrl, (response) => {
         if (response.statusCode !== 200) {
           console.error(`Error: HTTP Status ${response.statusCode}`);
-          resolve({ title: '', faviconUrl: null });
+          resolve({ title: null, iconUrl: null });
           return;
         }
 
@@ -23,7 +27,7 @@ export const fetchWebPageData = (inputUrl: string): Promise<PageData> => {
           htmlData += chunk;
         });
 
-        response.on('end', () => {
+        response.on('end', async () => {
           // Cheerioを使ってHTMLをパース
           const $ = cheerio.load(htmlData);
 
@@ -34,18 +38,26 @@ export const fetchWebPageData = (inputUrl: string): Promise<PageData> => {
           const faviconHref =
             $('link[rel="icon"]').attr('href') || $('link[rel="shortcut icon"]').attr('href');
 
-          let faviconUrl: string | null = null;
-
           if (faviconHref) {
-            faviconUrl = url.resolve(inputUrl, faviconHref);
+            const faviconUrl = url.resolve(inputUrl, faviconHref);
+
+            // faviconをPNGに変換して保存
+            const convertToPng = faviconToPng(faviconUrl);
+            iconUrl = faviconUrl;
+
+            // faviconが取得できない場合、Notionのfaviconを取得
+            if (!convertToPng) {
+              faviconToPng(documentPageIconUrl);
+              iconUrl = documentPageIconUrl;
+            }
           }
 
-          resolve({ title, faviconUrl });
+          resolve({ title, iconUrl });
         });
       })
-      .on('error', (err) => {
-        console.error('エラー:', err.message);
-        resolve({ title: null, faviconUrl: null });
+      .on('error', (error) => {
+        console.error(`Error: ${error}`);
+        resolve({ title: null, iconUrl: null });
       });
   });
 };

@@ -15,7 +15,7 @@ import { updateTask } from '../../notion/updatePage/updateTaskPage';
 import { insertTask } from '../../notion/insertPage/insertTaskPage';
 import { createTaskMessage } from '../message/createEmbed';
 import { fetchRelationName } from '../../notion/queryPage/fetchRelationName';
-import { getJsonData } from '../../notion/libraryData/getJsonData';
+import { loadJsonData } from '../../notion/libraryData/loadJsonData';
 import { TaskData } from '../../../types/original/notion';
 
 export const taskCommand = {
@@ -90,7 +90,7 @@ export const taskCommand = {
       const addedFolder: Set<string> = new Set();
 
       // NotionLibraryのデータを取得
-      const jsonData = getJsonData();
+      const jsonData = loadJsonData();
 
       // TaskフォルダのページIDを取得
       const taskFolderPageId: string | undefined = jsonData.Folder.SubFolder.find(
@@ -121,7 +121,7 @@ export const taskCommand = {
 
   // 各コマンドの処理
   async execute(interaction: ChatInputCommandInteraction) {
-    await interaction.deferReply();
+    if (!interaction.replied && !interaction.deferred) await interaction.deferReply();
     try {
       const { options } = interaction;
       const subCommand = options.getSubcommand();
@@ -261,7 +261,7 @@ export const taskCommand = {
         }
 
         // NotionLibraryのデータを取得
-        const jsonData = getJsonData();
+        const jsonData = loadJsonData();
 
         // TaskフォルダのページIDを取得
         const taskFolderPageId: string | undefined = jsonData.Folder.SubFolder.find(

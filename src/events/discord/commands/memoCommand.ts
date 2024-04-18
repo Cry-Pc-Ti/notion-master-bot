@@ -12,7 +12,7 @@ import { insertMemo } from '../../notion/insertPage/insertMemoPage';
 import { queryMemoPage } from '../../notion/queryPage/queryMemoPage';
 import { fetchRelationName } from '../../notion/queryPage/fetchRelationName';
 import { createMemoMessage } from '../message/createEmbed';
-import { getJsonData } from '../../notion/libraryData/getJsonData';
+import { loadJsonData } from '../../notion/libraryData/loadJsonData';
 
 export const memoCommand = {
   // スラッシュコマンドの定義
@@ -65,7 +65,7 @@ export const memoCommand = {
       const addedFolder: Set<string> = new Set();
 
       // NotionLibraryのデータを取得
-      const jsonData = getJsonData();
+      const jsonData = loadJsonData();
 
       // OutputフォルダのページIDを取得
       const outputFolderPageId: string | undefined = jsonData.Folder.SubFolder.find(
@@ -96,7 +96,7 @@ export const memoCommand = {
 
   // 各コマンドの処理
   async execute(interaction: ChatInputCommandInteraction) {
-    await interaction.deferReply();
+    if (!interaction.replied && !interaction.deferred) await interaction.deferReply();
     try {
       const { options } = interaction;
       const subCommand = options.getSubcommand();
@@ -115,7 +115,7 @@ export const memoCommand = {
         }
 
         // NotionLibraryのデータを取得
-        const jsonData = getJsonData();
+        const jsonData = loadJsonData();
 
         // メモフォルダのページIDを取得
         const outputFolderPageId: string | undefined = jsonData.Folder.SubFolder.find(
@@ -181,7 +181,7 @@ export const memoCommand = {
         }
 
         // NotionLibraryのデータを取得
-        const jsonData = getJsonData();
+        const jsonData = loadJsonData();
 
         // OutputフォルダのページIDを取得
         const outputFolderPageId: string | undefined = jsonData.Folder.SubFolder.find(

@@ -1,3 +1,6 @@
 node_modules
 .env
 notion-library-data.json
+static/img/tmp_icon.png
+static/img/favicon.png
+src/test.ts

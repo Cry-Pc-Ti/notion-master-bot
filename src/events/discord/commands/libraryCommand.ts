@@ -9,7 +9,8 @@ export const libraryCommand = {
     .toJSON(),
 
   async execute(interaction: ChatInputCommandInteraction) {
-    await interaction.deferReply();
+    if (!interaction.replied && !interaction.deferred) await interaction.deferReply();
+
     await interaction.editReply('Updating Library...');
 
     await saveNotionLibraryData();

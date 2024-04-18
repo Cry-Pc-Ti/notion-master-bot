@@ -178,7 +178,8 @@ export const saveNotionLibraryData = async () => {
     }
 
     // データをJSON形式で保存
-    fs.writeFileSync('notion-library-data.json', JSON.stringify(notionLibraryData, null, 2));
+    const outputFile = 'static/data/notion-library-data.json';
+    fs.writeFileSync(outputFile, JSON.stringify(notionLibraryData, null, 2));
   } catch (error) {
     console.error('Error Notion Library Data not Saved: ', error);
   }

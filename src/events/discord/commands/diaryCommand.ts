@@ -9,7 +9,7 @@ import { updateDiary } from '../../notion/updatePage/updateDiaryPage';
 import { createDiaryMessage } from '../message/createEmbed';
 import { DiaryData } from '../../../types/original/notion';
 import { insertDiary } from '../../notion/insertPage/insertDiaryPage';
-import { getJsonData } from '../../notion/libraryData/getJsonData';
+import { loadJsonData } from '../../notion/libraryData/loadJsonData';
 import { diaryTagId } from '../../../modules/notionModule';
 
 export const diaryCommand = {
@@ -60,7 +60,7 @@ export const diaryCommand = {
       const addedFolder: Set<string> = new Set();
 
       // NotionLibraryのデータを取得
-      const jsonData = getJsonData();
+      const jsonData = loadJsonData();
 
       // DiaryフォルダのページIDを取得
       const diaryFolderPageId: string | undefined = jsonData.Folder.SubFolder.find(
@@ -99,7 +99,8 @@ export const diaryCommand = {
   },
 
   async execute(interaction: ChatInputCommandInteraction) {
-    await interaction.deferReply();
+    if (!interaction.replied && !interaction.deferred) await interaction.deferReply();
+
     try {
       const { options } = interaction;
 
@@ -125,7 +126,7 @@ export const diaryCommand = {
       };
 
       // happinesのTagIdからTagNameを取得
-      const jsonData = getJsonData();
+      const jsonData = loadJsonData();
       const tagName = jsonData.Tag.find((tag) => tag.PageId === happiness)?.TagName;
       diaryData.happiness.tagName = tagName as string;
 

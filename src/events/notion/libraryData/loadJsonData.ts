@@ -2,8 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import { NotionLibraryData } from '../../../modules/notionModule';
 
-export const getJsonData = (): NotionLibraryData => {
-  const jsonFilePath = 'notion-library-data.json';
+export const loadJsonData = (): NotionLibraryData => {
+  const jsonFilePath = 'static/data/notion-library-data.json';
   const absolutePath = path.resolve(jsonFilePath);
   delete require.cache[absolutePath];
 

@@ -11,10 +11,9 @@ import {
 import { insertClip } from '../../notion/insertPage/insertClipPage';
 import { createClipMessage } from '../message/createEmbed';
 import { ClipData } from '../../../types/original/notion';
-import { getJsonData } from '../../notion/libraryData/getJsonData';
+import { loadJsonData } from '../../notion/libraryData/loadJsonData';
 import { isValidUrl } from '../../common/isValidationUrl';
 import { fetchWebPageData } from '../../common/fetchWebPageData';
-import { documentPageIconUrl } from '../../../modules/notionModule';
 
 export const clipCommand = {
   // コマンドを定義
@@ -42,7 +41,7 @@ export const clipCommand = {
       const addedFolder: Set<string> = new Set();
 
       // NotionLibraryのデータを取得
-      const jsonData = getJsonData();
+      const jsonData = loadJsonData();
 
       // マスタフォルダページIDがInputのサブフォルダを取得
       const subFolderPageIds: string[] | undefined = jsonData.Folder.MasterFolder.find(
@@ -71,9 +70,7 @@ export const clipCommand = {
   },
 
   async execute(interaction: ChatInputCommandInteraction) {
-    if (!interaction.replied && !interaction.deferred) {
-      await interaction.deferReply();
-    }
+    if (!interaction.replied && !interaction.deferred) await interaction.deferReply();
 
     // optionの情報を取得
     const subFolderPageId = interaction.options.getString('folder');
@@ -87,7 +84,6 @@ export const clipCommand = {
     }
 
     // 入力された文字列がURL出ない場合、処理を終了
-
     if (!isValidUrl(url)) {
       await interaction.editReply('URLが無効です');
       return;
@@ -105,19 +101,20 @@ export const clipCommand = {
       favorite: favorite,
     };
 
+    // URLからタイトルとfaviconを取得
     const webPageData = await fetchWebPageData(clipData.siteUrl);
 
     // タイトルが取得できない場合、処理を終了
-    if (!webPageData.title) {
+    if (!webPageData.title || !webPageData.iconUrl) {
       await interaction.editReply('処理が失敗しました');
       return;
     }
 
     clipData.title = webPageData.title;
-    clipData.faviconUrl = webPageData.faviconUrl ?? documentPageIconUrl;
+    clipData.faviconUrl = webPageData.iconUrl;
 
     // NotionLibraryのデータを取得
-    const jsonData = getJsonData();
+    const jsonData = loadJsonData();
 
     // InputフォルダのページIDを取得
     const inputFolderPageId: string | undefined = jsonData.Folder.MasterFolder.find(

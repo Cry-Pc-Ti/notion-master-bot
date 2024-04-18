@@ -13,7 +13,7 @@ export const createClipMessage = {
       .setTitle('Clip Saved')
       .setURL(clipData.notionPageUrl)
       .setColor(7506394)
-      .setThumbnail(clipData.faviconUrl)
+      .setThumbnail('attachment://favicon.png')
       .addFields({ name: 'Title', value: clipData.title })
       .setFooter({
         text: 'Notion',
@@ -24,9 +24,10 @@ export const createClipMessage = {
     const tags = clipData.tag.map((tag) => tag.name).join('\n');
     embed.addFields({ name: 'Tag', value: tags });
 
-    const fotterAttachment = new AttachmentBuilder('img/notion_logo.png');
+    const faviconAttachment = new AttachmentBuilder('static/img/favicon.png');
+    const fotterAttachment = new AttachmentBuilder('static/img/notion_logo.png');
 
-    return { embeds: [embed], files: [fotterAttachment], components: [] };
+    return { embeds: [embed], files: [faviconAttachment, fotterAttachment], components: [] };
   },
 };
 
@@ -49,7 +50,7 @@ export const createDiaryMessage = {
       })
       .setTimestamp();
 
-    const fotterAttachment = new AttachmentBuilder('img/notion_logo.png');
+    const fotterAttachment = new AttachmentBuilder('static/img/notion_logo.png');
 
     return { embeds: [embed], files: [fotterAttachment] };
   },
@@ -71,7 +72,7 @@ export const createMemoMessage = {
       })
       .setTimestamp();
 
-    const fotterAttachment = new AttachmentBuilder('img/notion_logo.png');
+    const fotterAttachment = new AttachmentBuilder('static/img/notion_logo.png');
 
     return { embeds: [embed], files: [fotterAttachment], components: [] };
   },
@@ -94,7 +95,7 @@ export const createMemoMessage = {
       });
     }
 
-    const fotterAttachment = new AttachmentBuilder('img/notion_logo.png');
+    const fotterAttachment = new AttachmentBuilder('static/img/notion_logo.png');
 
     return { embeds: [embed], files: [fotterAttachment], components: [] };
   },
@@ -121,7 +122,7 @@ export const createTaskMessage = {
       });
     }
 
-    const fotterAttachment = new AttachmentBuilder('img/notion_logo.png');
+    const fotterAttachment = new AttachmentBuilder('static/img/notion_logo.png');
 
     return { embeds: [embed], files: [fotterAttachment], components: [] };
   },
@@ -144,7 +145,7 @@ export const createTaskMessage = {
       });
     }
 
-    const fotterAttachment = new AttachmentBuilder('img/notion_logo.png');
+    const fotterAttachment = new AttachmentBuilder('static/img/notion_logo.png');
 
     return { embeds: [embed], files: [fotterAttachment], components: [] };
   },
@@ -172,7 +173,7 @@ export const createTaskMessage = {
       });
     }
 
-    const fotterAttachment = new AttachmentBuilder('img/notion_logo.png');
+    const fotterAttachment = new AttachmentBuilder('static/img/notion_logo.png');
 
     return { embeds: [embed], files: [fotterAttachment], components: [] };
   },
