@@ -16,7 +16,7 @@ import { insertTask } from '../../notion/insertPage/insertTaskPage';
 import { createTaskMessage } from '../message/createEmbed';
 import { fetchRelationName } from '../../notion/queryPage/fetchRelationName';
 import { loadJsonData } from '../../notion/libraryData/loadJsonData';
-import { TaskData } from '../../../types/original/notion';
+import { TaskData } from '../../../types';
 
 export const taskCommand = {
   // スラッシュコマンドの定義

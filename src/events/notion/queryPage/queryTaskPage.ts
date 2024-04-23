@@ -1,10 +1,10 @@
 import { notion, masterDbId } from '../../../modules/notionModule';
 import { isFullPage } from '@notionhq/client';
 import { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
-import { PropertyFilter } from '../../../types/@notionhq/api-endpoints';
+import { PropertyFilter } from '../../../types/api-endpoints';
 import { fetchRelationName } from './fetchRelationName';
 import { loadJsonData } from '../libraryData/loadJsonData';
-import { TaskData } from '../../../types/original/notion';
+import { TaskData } from '../../../types';
 
 export const queryTask = async (relativDate: string) => {
   // タスクデータを格納する配列

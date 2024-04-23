@@ -10,7 +10,7 @@ import {
 } from 'discord.js';
 import { insertClip } from '../../notion/insertPage/insertClipPage';
 import { createClipMessage } from '../message/createEmbed';
-import { ClipData } from '../../../types/original/notion';
+import { ClipData } from '../../../types';
 import { loadJsonData } from '../../notion/libraryData/loadJsonData';
 import { isValidUrl } from '../../common/isValidationUrl';
 import { fetchWebPageData } from '../../common/fetchWebPageData';
@@ -105,13 +105,13 @@ export const clipCommand = {
     const webPageData = await fetchWebPageData(clipData.siteUrl);
 
     // タイトルが取得できない場合、処理を終了
-    if (!webPageData.title || !webPageData.iconUrl) {
+    if (!webPageData.title || !webPageData.faviconUrl) {
       await interaction.editReply('処理が失敗しました');
       return;
     }
 
     clipData.title = webPageData.title;
-    clipData.faviconUrl = webPageData.iconUrl;
+    clipData.faviconUrl = webPageData.faviconUrl;
 
     // NotionLibraryのデータを取得
     const jsonData = loadJsonData();

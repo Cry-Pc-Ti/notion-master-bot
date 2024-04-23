@@ -1,5 +1,5 @@
 import { notion } from '../../../modules/notionModule';
-import { DiaryData } from '../../../types/original/notion';
+import { DiaryData } from '../../../types';
 
 export const updateDiary = async (diaryData: DiaryData) => {
   try {

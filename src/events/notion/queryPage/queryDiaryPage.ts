@@ -1,7 +1,7 @@
 import { notion, masterDbId } from '../../../modules/notionModule';
 import { isFullPage } from '@notionhq/client';
 import { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
-import { DiaryData } from '../../../types/original/notion';
+import { DiaryData } from '../../../types';
 
 export const queryDiaryPage = async (diaryData: DiaryData) => {
   try {

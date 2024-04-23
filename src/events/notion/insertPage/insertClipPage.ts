@@ -1,7 +1,7 @@
 import { notion, masterDbId } from '../../../modules/notionModule';
 import { isFullPage } from '@notionhq/client';
 import { CreatePageResponse } from '@notionhq/client/build/src/api-endpoints';
-import { ClipData } from '../../../types/original/notion';
+import { ClipData } from '../../../types';
 
 export const insertClip = async (clipData: ClipData) => {
   if (!clipData.title) return;

@@ -1,6 +1,6 @@
 // 必要なモジュールをインポート
 import { EmbedBuilder, AttachmentBuilder } from 'discord.js';
-import { ClipData, DiaryData, TaskData } from '../../../types/original/notion';
+import { ClipData, DiaryData, TaskData } from '../../../types';
 import { taskListViewUrl } from '../../../modules/notionModule';
 
 // Clipコマンドのメッセージを作成
@@ -13,7 +13,7 @@ export const createClipMessage = {
       .setTitle('Clip Saved')
       .setURL(clipData.notionPageUrl)
       .setColor(7506394)
-      .setThumbnail('attachment://favicon.png')
+      .setThumbnail(clipData.faviconUrl)
       .addFields({ name: 'Title', value: clipData.title })
       .setFooter({
         text: 'Notion',
@@ -24,10 +24,9 @@ export const createClipMessage = {
     const tags = clipData.tag.map((tag) => tag.name).join('\n');
     embed.addFields({ name: 'Tag', value: tags });
 
-    const faviconAttachment = new AttachmentBuilder('static/img/favicon.png');
     const fotterAttachment = new AttachmentBuilder('static/img/notion_logo.png');
 
-    return { embeds: [embed], files: [faviconAttachment, fotterAttachment], components: [] };
+    return { embeds: [embed], files: [fotterAttachment], components: [] };
   },
 };
 

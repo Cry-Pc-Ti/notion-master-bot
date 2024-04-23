@@ -1,7 +1,7 @@
 // 必要なモジュールをインポート
 import * as dotenv from 'dotenv';
 import { Client } from '@notionhq/client';
-import { NotionLibraryData, FolderData, TagData } from '../types/original/notion';
+import { NotionLibraryData, FolderData, TagData } from '../types';
 
 // ENVファイルの読み込み
 dotenv.config();
