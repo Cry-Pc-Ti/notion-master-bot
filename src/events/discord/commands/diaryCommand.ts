@@ -159,13 +159,13 @@ export const diaryCommand = {
     let startDay = '';
     let endDay = '';
 
-    for (let i = 0; i < 7; i++) {
+    for (let i = 1; i <= 7; i++) {
       const date = new Date(new Date().setDate(new Date().getDate() + i))
         .toISOString()
         .split('T')[0];
 
-      if (i === 0) startDay = date;
-      if (i === 6) endDay = date;
+      if (i === 1) startDay = date;
+      if (i === 7) endDay = date;
 
       // 曜日を取得
       const dayOfWeek = new Date(date).toDateString().split(' ')[0];
